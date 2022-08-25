@@ -35,6 +35,9 @@ class _PurchaseOrderState extends State<PurchaseOrder> {
   TextEditingController qty = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController total1 = TextEditingController();
+  TextEditingController Remarks = TextEditingController();
+  TextEditingController TotalAmount = TextEditingController();
+
   String data = "payment";
   String? supplierdropdownvalue;
   String? customerdropdownvalue;
@@ -98,18 +101,20 @@ class _PurchaseOrderState extends State<PurchaseOrder> {
   }
 
   cleardata() {
-    mobileNo.clear();
-    po_no.clear();
-    qty.clear();
-    barcode.clear();
-    price.clear();
-    total1.clear();
-    supplierdropdownvalue = null;
-    itemdropdownvalue = null;
-    itemcolordropdown = null;
-    itemSizedropdown = null;
-    _selectedDate1 = DateTime.now();
-    _selectedDate = DateTime.now();
+    setState(() {
+      mobileNo.clear();
+      po_no.clear();
+      qty.clear();
+      barcode.clear();
+      price.clear();
+      total1.clear();
+      supplierdropdownvalue = null;
+      itemdropdownvalue = null;
+      itemcolordropdown = null;
+      itemSizedropdown = null;
+      _selectedDate1 = DateTime.now();
+      _selectedDate = DateTime.now();
+    });
   }
 
   // Get supplier data By Id
@@ -936,14 +941,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> {
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
                                         color: lightblackcolor, width: 1)),
-                                child: TextFormField(
-                                  maxLines: null,
-                                  minLines: null,
-                                  keyboardType: TextInputType.multiline,
-                                  decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.only(left: 10),
-                                      border: InputBorder.none),
-                                ))
+                                child: Text("${totaldata}"))
                           ]),
                       SizedBox(
                         height: height * .02,
@@ -984,6 +982,7 @@ class _PurchaseOrderState extends State<PurchaseOrder> {
                     ])))));
   }
 
+  var totaldata;
   Widget _viewdata(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -996,9 +995,10 @@ class _PurchaseOrderState extends State<PurchaseOrder> {
                     shrinkWrap: true,
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.vertical,
-                    itemCount:1,
+                    itemCount: 1,
                     itemBuilder: (context, index) {
                       var data = snapshot.data?.data[index];
+                      totaldata = data?.price;
                       print(data?.price);
                       return Card(
                           elevation: 2,

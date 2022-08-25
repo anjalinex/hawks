@@ -4,6 +4,7 @@ import 'package:hawks/Model/viewCustomerDetails.dart';
 import 'package:hawks/Model/viewItem_details.dart';
 import 'package:hawks/Model/view_create_purchase.dart';
 import 'package:hawks/Model/view_itemsize_details.dart';
+import 'package:hawks/Model/view_purchaseReturn.dart';
 import 'package:hawks/Model/view_supplier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -454,6 +455,18 @@ class ApiServices {
         throw new Exception("Error");
       }
       return ViewPurchaseOrder.fromJson(json.decode(response.body));
+    });
+  }
+
+  //ViewCreatePurchaseReturn
+  Future<ViewPurchaseReturn> ViewPurchasereturn() async {
+    return http.get(Uri.parse(view_purchase_return))
+        .then((http.Response response) {
+      final int statusCode = response.statusCode;
+      if (statusCode != 200) {
+        throw new Exception("Error");
+      }
+      return ViewPurchaseReturn.fromJson(json.decode(response.body));
     });
   }
 }

@@ -39,3 +39,4 @@ String view_item = baseurl + "view_item";
 String view_bill_no = baseurl + "view_bill_no";
 String view_supplier_id = baseurl + "view_supplier_id";
 String create_purchase_return = baseurl + "create_purchase_return";
+String view_purchase_return = baseurl + "view_purchase_return";

@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Model/models.dart';
 import '../../../Model/view_create_purchase.dart';
+import '../../../Model/view_purchaseReturn.dart';
 import '../../../Repository/ApiServices.dart';
 import '../../../constants/style.dart';
 import '../../../constants/url.dart';
@@ -23,14 +24,25 @@ class PurchaseReturn extends StatefulWidget {
 }
 
 class _PurchaseReturnState extends State<PurchaseReturn> {
+  final _formKey = GlobalKey<FormState>();
+  void _processData() {
+    _formKey.currentState?.reset();
+  }
+  num totalAmount = 0;
+  bool isLoading = false;
   TextEditingController Address = TextEditingController();
   TextEditingController barcode = TextEditingController();
   TextEditingController mobileNo = TextEditingController();
   TextEditingController BillNo = TextEditingController();
   TextEditingController qty = TextEditingController();
   TextEditingController base_price = TextEditingController();
+  TextEditingController base_price1 = TextEditingController();
   TextEditingController dis_amt = TextEditingController();
   TextEditingController Total = TextEditingController();
+  TextEditingController return_qty = TextEditingController();
+  TextEditingController total_exclude_tax = TextEditingController();
+  TextEditingController total_gst = TextEditingController();
+  TextEditingController grand_total = TextEditingController();
 
   String? supplierdropdownvalue;
   String? saletypedropdownvalue;
@@ -114,10 +126,6 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
       var data = json.decode(response.body);
       setState(() {
         billdataBySId = data["data"];
-        // skubarcode = ItemIdData[0]["sku"];
-        // itemsizedropdownvalue = ItemIdData[0]["itme_size_id"];
-        // itemcolordropdownvalue = ItemIdData[0]["item_color_id"];
-        // barcode = TextEditingController(text: skubarcode);
         print("ItemIdData${billdataBySId}");
       });
       return response;
@@ -208,21 +216,24 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
   ];
 
   cleardata() {
-    Address.clear();
-    mobileNo.clear();
-    posdropdownvalue = null;
-    supplierdropdownvalue = null;
-    GstTypedropdown = gstType[0];
-    BillNo.clear();
-    _selectedDate = DateTime.now();
-    barcode.clear();
-    itemdropdownvalue = null;
-    unitdropdown = unit[0];
-    itemcolordropdownvalue = null;
-    itemsizedropdownvalue = null;
-    qty.clear();
-    base_price.clear();
-    Total.clear();
+    setState(() {
+      Address.clear();
+      mobileNo.clear();
+      posdropdownvalue = null;
+      supplierdropdownvalue = null;
+      GstTypedropdown = gstType[0];
+      BillNo.clear();
+      bill_no = "";
+      _selectedDate = DateTime.now();
+      barcode.clear();
+      itemdropdownvalue = null;
+      unitdropdown = unit[0];
+      itemcolordropdownvalue = null;
+      itemsizedropdownvalue = null;
+      qty.clear();
+      base_price.clear();
+      Total.clear();
+    });
   }
 
   Future addPurchaseReturn() async {
@@ -1025,7 +1036,11 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
                                     child: CupertinoButton(
                                       onPressed: () async {
                                         await addPurchaseReturn();
+                                        _formKey.currentState?.reset();
                                         cleardata();
+                                        setState(() {
+                                          isLoading = true;
+                                        });
                                       },
                                       child: Text("Add"),
                                       color: primarycolor,
@@ -1040,7 +1055,7 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
                             SizedBox(
                               height: height * .02,
                             ),
-                            datalist(context)
+                            isLoading == true ? datalist(context) : Container()
                           ]))),
                   Card(
                       elevation: 2,
@@ -1069,6 +1084,7 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
                                               width: 1)),
                                     ),
                                     child: TextField(
+                                      controller: total_exclude_tax,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -1305,161 +1321,230 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Container(
-      child: ListView.builder(
-          itemCount: 1,
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                shadowColor: primarycolor,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Item Name :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("SKU/Barcode :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Unit :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Item Color :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Item Size :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Purchase(Qty) :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Return(Qty) :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Base Price :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Our Price :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Discount(%) :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Discount(Amount) :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Total :"),
-                            Text("NA"),
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Action"),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.delete,
-                                    color: Color(0xffAB2328)))
-                          ],
-                        ),
-                        SizedBox(
-                          height: height * .01,
-                        ),
-                      ]),
+        child: FutureBuilder<ViewPurchaseReturn>(
+            future: ApiServices().ViewPurchasereturn(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: 1,
+                    itemBuilder: (context, index) {
+                      var data = snapshot.data?.data[index];
+                      base_price1 = TextEditingController(text: data?.basePrice);
+                      return_qty = TextEditingController(text: "1");
+                      total_exclude_tax = TextEditingController(text: "${totalAmount}");
+                      var data1 = int.parse("${snapshot.data?.data.length}");
+                      for(int i = 1; i<= data1;i++){
+                        totalAmount = totalAmount + int.parse("${data?.total}");
+                        print(totalAmount);
+                      }
+                      print(data?.total);
+                      return Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          shadowColor: primarycolor,
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Item Name :"),
+                                      Text("${data?.itemName}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("SKU/Barcode :"),
+                                      Text("${data?.barcode}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Unit :"),
+                                      Text("${data?.unit}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Item Color :"),
+                                      Text("${data?.itemcolor}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Item Size :"),
+                                      Text("${data?.itemsize}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Purchase(Qty) :"),
+                                      Text("${data?.qty}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Return(Qty) :"),
+                                      Container(
+                                          width: width * .10,
+                                          height: height * .04,
+                                          decoration: BoxDecoration(
+                                            border: const Border(
+                                                bottom: BorderSide(
+                                                    color: lightblackcolor,
+                                                    width: 1)),
+                                          ),
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: return_qty,
+                                            cursorColor: lightblackcolor,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  EdgeInsets.only(bottom: 5),
+                                              border: InputBorder.none,
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Base Price :"),
+                                      Container(
+                                          width: width * .10,
+                                          height: height * .04,
+                                          decoration: BoxDecoration(
+                                            border: const Border(
+                                                bottom: BorderSide(
+                                                    color: lightblackcolor,
+                                                    width: 1)),
+                                          ),
+                                          child: TextField(
+                                            textAlign: TextAlign.right,
+                                            controller: base_price1,
+                                            cursorColor: lightblackcolor,
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                              EdgeInsets.only(bottom: 5),
+                                              border: InputBorder.none,
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Our Price :"),
+                                      Text("${data?.basePrice}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Discount(%) :"),
+                                      Text("NA"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Discount(Amount) :"),
+                                      Text("NA"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Total :"),
+                                      Text("${data?.total}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Action"),
+                                      IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(Icons.delete,
+                                              color: Color(0xffAB2328)))
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                ]),
+                          ));
+                    });
+              } else {
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: primarycolor,
                 ));
-          }),
-    );
+              }
+            }));
   }
 
   var _selectedDate;
