@@ -45,7 +45,7 @@ class _DashboardState extends State<Dashboard> {
           title: Text("Dashboard"),
           centerTitle: true,
         ),
-        body: ListView(
+        body: Column(
           children: [
             Container(
               height: height * .10,
@@ -56,28 +56,88 @@ class _DashboardState extends State<Dashboard> {
                       bottomRight: Radius.circular(100)),
                   color: primarycolor),
             ),
-            Row(
-              children: [
-                Column(
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
                   children: [
-                    IconButton(
-                        onPressed: () {}, icon: Icon(Icons.point_of_sale)),
-                    Text(
-                      "Sale",
-                      style: subheadline3,
-                    )
+                    SizedBox(
+                      height: height * .02,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.settings,
+                                color: primarycolor,
+                                size: 40,
+                              ),
+                            ),
+                            Text(
+                              "Setting",
+                              style: subheadline3,
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.create,
+                                color: primarycolor,
+                              ),
+                            ),
+                            Text(
+                              "Master",
+                              style: subheadline3,
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: Image.asset(
+                                "assets/images/sales.jpg",
+                                height: height * .05,
+                              ),
+                            ),
+                            Text(
+                              "Sale",
+                              style: subheadline3,
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: Image.asset(
+                                "assets/images/purchase.png",
+                                height: height * .05,
+                                color: primarycolor,
+                              ),
+                            ),
+                            Text(
+                              "Purchase",
+                              style: subheadline3,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ],
-                )
-              ],
-            )
+                ))
           ],
         ),
         drawer: Drawer(
           child: Container(
+            color: Colors.white,
             child: ListView(children: <Widget>[
-              SizedBox(
-                height: height * .02,
-              ),
               SizedBox(
                   height: height * .18,
                   child: Container(
@@ -272,9 +332,9 @@ class _DashboardState extends State<Dashboard> {
                         value: 1,
                         headerBuilder: (_, isExpanded) => Container(
                                 child: ListTile(
-                              leading: const Icon(
-                                Icons.point_of_sale,
-                                color: primarycolor,
+                              leading: Image.asset(
+                                "assets/images/sales.jpg",
+                                height: height * .03,
                               ),
                               title: Text(
                                 "Sale",
@@ -326,8 +386,9 @@ class _DashboardState extends State<Dashboard> {
                         value: 1,
                         headerBuilder: (_, isExpanded) => Container(
                                 child: ListTile(
-                              leading: const Icon(
-                                Icons.point_of_sale,
+                              leading: Image.asset(
+                                "assets/images/purchase.png",
+                                height: height * .03,
                                 color: primarycolor,
                               ),
                               title: Text(
@@ -339,19 +400,19 @@ class _DashboardState extends State<Dashboard> {
                             child: Column(children: [
                           InkWell(
                             onTap: () {
-                              Get.to(Purchase(),
-                                  duration: Duration(milliseconds: 300),
-                                  transition: Transition.rightToLeft);
-                            },
-                            child: _tile('Create Purchase', Icons.create),
-                          ),
-                          InkWell(
-                            onTap: () {
                               Get.to(PurchaseOrder(),
                                   duration: Duration(milliseconds: 300),
                                   transition: Transition.rightToLeft);
                             },
-                            child: _tile('Purchase Order', Icons.group),
+                            child: _tile('Purchase Order', Icons.create),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Get.to(Purchase(),
+                                  duration: Duration(milliseconds: 300),
+                                  transition: Transition.rightToLeft);
+                            },
+                            child: _tile('Create Purchase', Icons.group),
                           ),
                           InkWell(
                             onTap: () {
@@ -462,11 +523,11 @@ class _DashboardState extends State<Dashboard> {
                                         child: Column(children: [
                                       InkWell(
                                         onTap: () {
-                                          Get.to(ItemDetails(),
-                                              duration:
-                                                  Duration(milliseconds: 300),
-                                              transition:
-                                                  Transition.rightToLeft);
+                                          // Get.to(ItemDetails(),
+                                          //     duration:
+                                          //         Duration(milliseconds: 300),
+                                          //     transition:
+                                          //         Transition.rightToLeft);
                                         },
                                         child: _tile(
                                             'Journal Entry', Icons.create),
@@ -557,9 +618,6 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ]))),
                   ]),
-              SizedBox(
-                height: height * .04,
-              ),
               Image(
                 image: AssetImage("assets/images/help1.png"),
                 height: height * .10,

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -62,8 +61,8 @@ class _CustomerFormState extends State<CustomerForm> {
       'creadit_limit': creadit_limit.text,
       'billing_address': billing_address.text,
       'country_id': '101',
-      'state_id': '2',
-      'city_id': '1',
+      'state_id': "${statedropdownvalue}",
+      'city_id': "${cityDropdown}",
       'address': address.text,
       'zipcode': zipcode.text
     });
@@ -89,25 +88,39 @@ class _CustomerFormState extends State<CustomerForm> {
     }
   }
 
+  List statedata = []; //edited line
+  Future<String> getStateData() async {
+    http.Response response = await http.post(Uri.parse(statesApi), body: {
+      "country_id": "101",
+    }).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        statedata = data["data"];
+        print(statedata);
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  //City
+  List citydata = []; //edited line
+  Future<String> getCityData() async {
+    http.Response response = await http.post(Uri.parse(cityApi), body: {
+      "state_id": statedropdownvalue,
+    }).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        citydata = data["data"];
+        print(citydata);
+      });
+      return response;
+    });
+    return "success";
+  }
+
   var country = [
     'India',
-    'Nepal',
-    'Australia',
-    'Japan',
-  ];
-
-  var states = [
-    'Bihar',
-    'Haryana',
-    'Uttar Pradesh',
-    'Punjab',
-  ];
-
-  var cities = [
-    'India',
-    'Nepal',
-    'Australia',
-    'Japan',
   ];
 
   @override
@@ -115,6 +128,9 @@ class _CustomerFormState extends State<CustomerForm> {
     // TODO: implement initState
     super.initState();
     Titeldropdownvalue = title[0];
+    countrydropdown = country[0];
+    getStateData();
+    getCityData();
   }
 
   @override
@@ -377,70 +393,68 @@ class _CustomerFormState extends State<CustomerForm> {
                 height: height * .02,
               ),
               Container(
-                width: width * .40,
-                decoration: BoxDecoration(
-                    border: Border(
-                  bottom: BorderSide(
-                    color: lightblackcolor,
-                    width: 1.0,
-                  ),
-                )),
-                child: DropdownButton(
-                  isExpanded: true,
-                  underline: Container(),
-                  hint: Text(
-                    "Select State",
-                    style: subheadline,
-                  ),
-                  value: statedropdownvalue,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: states.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      statedropdownvalue = newValue!;
-                    });
-                  },
-                ),
-              ),
+                  width: width * .40,
+                  decoration: const BoxDecoration(
+                      border: Border(
+                    bottom: BorderSide(
+                      color: lightblackcolor,
+                      width: 1.0,
+                    ),
+                  )),
+                  child: DropdownButton(
+                      isExpanded: true,
+                      underline: Container(),
+                      value: statedropdownvalue,
+                      hint: Text(
+                        "Select State",
+                        style: loginhinttext,
+                      ),
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: statedata.map((items) {
+                        return DropdownMenuItem(
+                          value: items['id'].toString(),
+                          child: Text(items['name'].toString()),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          statedropdownvalue = newValue!;
+                          getCityData();
+                        });
+                      })),
               SizedBox(
                 height: height * .02,
               ),
               Container(
-                width: width * .40,
-                decoration: BoxDecoration(
-                    border: Border(
-                  bottom: BorderSide(
-                    color: lightblackcolor,
-                    width: 1.0,
-                  ),
-                )),
-                child: DropdownButton(
-                  isExpanded: true,
-                  underline: Container(),
-                  hint: Text(
-                    "Select City",
-                    style: subheadline,
-                  ),
-                  value: cityDropdown,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: cities.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      cityDropdown = newValue!;
-                    });
-                  },
-                ),
-              ),
+                  width: width * .40,
+                  decoration: const BoxDecoration(
+                      border: Border(
+                    bottom: BorderSide(
+                      color: lightblackcolor,
+                      width: 1.0,
+                    ),
+                  )),
+                  child: DropdownButton(
+                    isExpanded: true,
+                    underline: Container(),
+                    value: cityDropdown,
+                    hint: Text(
+                      "Select City",
+                      style: loginhinttext,
+                    ),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items: citydata.map((items) {
+                      return DropdownMenuItem(
+                        value: items['id'].toString(),
+                        child: Text(items['name'].toString()),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        cityDropdown = newValue!;
+                      });
+                    },
+                  )),
               SizedBox(
                 height: height * .02,
               ),
@@ -584,9 +598,9 @@ class _CustomerFormState extends State<CustomerForm> {
                   Container(
                       width: width * .20,
                       child: CupertinoButton(
-                        onPressed: () {
-                          CreateCustomer();
-                          Get.back();
+                        onPressed: () async {
+                          await CreateCustomer().then((value) => Get.back());
+                          //Get.back();
                         },
                         child: Text("Save"),
                         color: primarycolor,

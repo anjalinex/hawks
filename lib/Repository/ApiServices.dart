@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:hawks/Model/viewCustomerDetails.dart';
 import 'package:hawks/Model/viewItem_details.dart';
+import 'package:hawks/Model/view_create_purchase.dart';
 import 'package:hawks/Model/view_itemsize_details.dart';
 import 'package:hawks/Model/view_supplier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,7 @@ import 'package:hawks/constants/url.dart';
 import 'package:hawks/screens/dashboard.dart';
 import 'package:hawks/screens/loginpage.dart';
 import 'package:http/http.dart' as http;
-
+import '../Model/ViewPurchaseorder.dart';
 import '../Model/viewInvoiceDetails.dart';
 import '../Model/viewInvoiceDetails.dart';
 import '../Model/viewInvoiceDetails.dart';
@@ -37,7 +38,7 @@ class ApiServices {
     String city,
     String contact,
   ) async {
-    Map data = {
+    var data = {
       'name': name,
       'email': email,
       'password': password,
@@ -46,11 +47,19 @@ class ApiServices {
       'city': city,
       'contact': contact
     };
-
+    print(data);
     String body = json.encode(data);
     var response = await http.post(
       Uri.parse(signupApi),
-      body: body,
+      body: {
+        'name': name,
+        'email': email,
+        'password': password,
+        'country': '1',
+        'state': state,
+        'city': city,
+        'contact': contact
+      },
     );
     var dataresponse = jsonDecode(response.body);
     print(response.body);
@@ -77,74 +86,30 @@ class ApiServices {
     }
   }
 
-  //signup
-  Future signup(
-    String name,
-    String email,
-    String password,
-    String country,
-    String state,
-    String city,
-    String contact,
-  ) async {
-    var request = http.MultipartRequest('POST', Uri.parse(signupApi));
-    request.fields.addAll({
-      'name': name,
-      'email': email,
-      'password': password,
-      'country': '1',
-      'state': '3',
-      'city': '2',
-      'contact': contact
-    });
-    http.StreamedResponse response = await request.send();
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-      print(response.reasonPhrase);
-      Get.offAll(Dashboard());
-    } else {
-      print(response.reasonPhrase);
-    }
-    return response.reasonPhrase;
-  }
-
-  //Login
-  Future login(
-    String email,
-    String password,
-  ) async {
-    var request = http.MultipartRequest('POST', Uri.parse(loginApi));
-    request.fields.addAll({'email': email, 'password': password});
-    http.StreamedResponse response = await request.send();
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-      print(response.reasonPhrase);
-      Get.offAll(Dashboard());
-    } else {
-      print(response.reasonPhrase);
-    }
-    return response.reasonPhrase;
-  }
 
   //Login
   Future Login(
     String email,
     String password,
   ) async {
-    Map data = {'email': email, 'password': password};
-    print(data);
-    String body = json.encode(data);
     var response = await http.post(
       Uri.parse(loginApi),
-      body: body,
+      body: {'email': email, 'password': password},
     );
     var dataresponse = jsonDecode(response.body);
+    var user = dataresponse["data"]["email"];
+    print("User$user");
     print(response.body);
     print(response.statusCode);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && dataresponse["message"] == "Success") {
       Get.offAll(Dashboard());
+      final prefs =
+      await SharedPreferences
+          .getInstance();
+       user = prefs.setString("email", dataresponse["data"]["email"]);
+
       Fluttertoast.showToast(
-          msg: dataresponse["message"],
+          msg: "Login Successful",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 5,
@@ -209,7 +174,6 @@ class ApiServices {
     String company_name,
     String email,
     String gst_no,
-    String pos,
     String contact_no,
     String est_year,
     String country_id,
@@ -222,11 +186,11 @@ class ApiServices {
     String address,
     String date,
   ) async {
-    Map data = {
+    var data = {
       'company_name': company_name,
       'email': email,
       'gst_no': gst_no,
-      'pos': pos,
+      'pos': '1',
       'contact_no': contact_no,
       'est_year': est_year,
       'country_id': '1',
@@ -240,10 +204,9 @@ class ApiServices {
       'date': date
     };
 
-    String body = json.encode(data);
     var response = await http.post(
       Uri.parse(createCompany),
-      body: body,
+      body: data,
     );
     var dataresponse = jsonDecode(response.body);
     print(response.body);
@@ -269,65 +232,6 @@ class ApiServices {
     }
   }
 
-  //Createcompany
-  // Future CreateInvoice(
-  //   String branches,
-  //   String invoice_type,
-  //   String invoice_format,
-  //   String invoice_name,
-  //   String terms_condition1,
-  //   String terms_condition2,
-  //   String terms_condition3,
-  //   String terms_condition4,
-  //   String bank_name,
-  //   String ifsc_code,
-  //   String account_no,
-  //   String bank_address,
-  //   String header_color,
-  // ) async {
-  //   Map data = {
-  //     'branches': branches,
-  //     'invoice_type': invoice_type,
-  //     'invoice_format': invoice_format,
-  //     'invoice_name': invoice_name,
-  //     'terms_condition1': terms_condition1,
-  //     'terms_condition2': terms_condition2,
-  //     'terms_condition3': terms_condition3,
-  //     'terms_condition4': terms_condition4,
-  //     'bank_name': bank_name,
-  //     'ifsc_code': ifsc_code,
-  //     'account_no': account_no,
-  //     'bank_address': bank_address,
-  //     'header_color': header_color
-  //   };
-  //   String body = json.encode(data);
-  //   var response = await http.post(
-  //     Uri.parse(createinvoice),
-  //     body: body,
-  //   );
-  //   var dataresponse = jsonDecode(response.body);
-  //   print(response.body);
-  //   print(response.statusCode);
-  //   if (response.statusCode == 200) {
-  //     Fluttertoast.showToast(
-  //         msg: dataresponse["message"],
-  //         toastLength: Toast.LENGTH_SHORT,
-  //         gravity: ToastGravity.CENTER,
-  //         timeInSecForIosWeb: 5,
-  //         backgroundColor: Colors.black,
-  //         textColor: Colors.white,
-  //         fontSize: 16.0);
-  //   } else {
-  //     Fluttertoast.showToast(
-  //         msg: dataresponse["message"],
-  //         toastLength: Toast.LENGTH_SHORT,
-  //         gravity: ToastGravity.CENTER,
-  //         timeInSecForIosWeb: 5,
-  //         backgroundColor: Colors.black,
-  //         textColor: Colors.white,
-  //         fontSize: 16.0);
-  //   }
-  // }
 
 //ViewCompanyDetails
   Future<ViewCompanyDetails> Viewcompany() async {
@@ -525,5 +429,31 @@ class ApiServices {
       print(response.reasonPhrase);
     }
     return response.reasonPhrase;
+  }
+
+  //ViewCreatePurchase
+  Future<ViewCreatePurchase> ViewcreatePurchase() async {
+    return http
+        .get(Uri.parse(view_purchase))
+        .then((http.Response response) {
+      final int statusCode = response.statusCode;
+      if (statusCode != 200) {
+        throw new Exception("Error");
+      }
+      return ViewCreatePurchase.fromJson(json.decode(response.body));
+    });
+  }
+
+  //ViewCreatePurchase
+  Future<ViewPurchaseOrder> ViewPurchaseorder() async {
+    return http
+        .get(Uri.parse(view_purchase_order))
+        .then((http.Response response) {
+      final int statusCode = response.statusCode;
+      if (statusCode != 200) {
+        throw new Exception("Error");
+      }
+      return ViewPurchaseOrder.fromJson(json.decode(response.body));
+    });
   }
 }

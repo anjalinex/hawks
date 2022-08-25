@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,32 +8,69 @@ import 'package:hawks/Model/models.dart';
 import 'package:hawks/Repository/ApiServices.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/color.dart';
 import '../../constants/style.dart';
 import '../../constants/url.dart';
-import '../supplier/supllier_details.dart';
 
-class CompanyForm extends StatefulWidget {
-  const CompanyForm({Key? key}) : super(key: key);
+class EditCompanyForm extends StatefulWidget {
+  // String company_name,
+  //     id,
+  //     email,
+  //     gst_no,
+  //     contact_no,
+  //     zipcode,
+  //     username,
+  //     locality,
+  //     address;
+  EditCompanyForm(
+      // this.company_name, this.email, this.gst_no, this.zipcode,
+      // this.username, this.locality, this.address, this.contact_no, this.id,
+      {Key? key})
+      : super(key: key);
 
   @override
-  State<CompanyForm> createState() => _CompanyFormState();
+  State<EditCompanyForm> createState() => _EditCompanyFormState();
 }
 
-class _CompanyFormState extends State<CompanyForm> {
-  final TextEditingController company_namecontroller = TextEditingController();
-  final TextEditingController emailcontroller = TextEditingController();
-  final TextEditingController gst_nocontroller = TextEditingController();
-  final TextEditingController poscontroller = TextEditingController();
-  final TextEditingController contact_nocontroller = TextEditingController();
-  final TextEditingController zipcodecontroller = TextEditingController();
-  final TextEditingController usernamecontroller = TextEditingController();
-  final TextEditingController localitycontroller = TextEditingController();
-  final TextEditingController addresscontroller = TextEditingController();
+class _EditCompanyFormState extends State<EditCompanyForm> {
+  TextEditingController company_namecontroller = TextEditingController();
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController gst_nocontroller = TextEditingController();
+  TextEditingController contact_nocontroller = TextEditingController();
+  TextEditingController zipcodecontroller = TextEditingController();
+  TextEditingController usernamecontroller = TextEditingController();
+  TextEditingController localitycontroller = TextEditingController();
+  TextEditingController addresscontroller = TextEditingController();
 
   String? countrydropdownvalue;
   String? statedropdownvalue;
   String? citydropdownvalue;
+
+  String? company_name,
+      id,
+      email,
+      gst_no,
+      contact_no,
+      zipcode,
+      username,
+      locality,
+      address;
+
+  getdata() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      company_name = prefs.getString("companyName");
+      email = prefs.getString("email");
+      gst_no = prefs.getString("gstNo");
+      contact_no = prefs.getString("contactNo");
+      zipcode = prefs.getString("zipcode");
+      username = prefs.getString("username");
+      locality = prefs.getString("locality");
+      address = prefs.getString("address");
+    });
+    print(company_name);
+  }
 
   //State
   List statedata = []; //edited line
@@ -53,7 +89,7 @@ class _CompanyFormState extends State<CompanyForm> {
   }
 
   //City
-  List citydata = []; //edited line
+  List citydata = [];
   Future<String> getCityData() async {
     http.Response response = await http.post(Uri.parse(cityApi), body: {
       "state_id": statedropdownvalue,
@@ -99,6 +135,7 @@ class _CompanyFormState extends State<CompanyForm> {
     DateFormate(4, 'yyyy-MM-dd'),
   ];
 
+  //CreateCompany
   Future CreateCompany() async {
     var request = http.MultipartRequest('POST', Uri.parse(createCompany));
     request.fields.addAll({
@@ -108,7 +145,7 @@ class _CompanyFormState extends State<CompanyForm> {
       'pos': '1',
       'contact_no': contact_nocontroller.text,
       'est_year': _selectedDate,
-      'country_id': '1',
+      'country_id': '101',
       'state_id': "${statedropdownvalue}",
       'city_id': "${citydropdownvalue}",
       'zipcode': zipcodecontroller.text,
@@ -139,19 +176,40 @@ class _CompanyFormState extends State<CompanyForm> {
     }
   }
 
+  //EditCompany
+  Future EditCompany() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("id");
+    var request = http.MultipartRequest('POST', Uri.parse(edit_company));
+    request.fields.addAll({
+      'id': "${id}",
+      'company_name': company_namecontroller.text,
+      'email': emailcontroller.text,
+      'gst_no': gst_nocontroller.text,
+      'pos': '1',
+      'contact_no': contact_nocontroller.text,
+      'est_year': "${_selectedDate}",
+      'country_id': '1',
+      'state_id': "${statedropdownvalue}",
+      'city_id': "${citydropdownvalue}",
+      'zipcode': zipcodecontroller.text,
+      'username': usernamecontroller.text,
+      'locality': localitycontroller.text,
+      'language': "${languagedropdown.Language_name}",
+      'address': addresscontroller.text,
+      'date': "${dateformatedropdown}"
+    });
+
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
   var country = [
     'India',
-  ];
-
-  var state = [
-    'Haryana',
-    'Bihar',
-    'Uttar Pradesh',
-  ];
-
-  var city = [
-    'Gurgaon',
-    'Noida',
   ];
 
   @override
@@ -165,10 +223,20 @@ class _CompanyFormState extends State<CompanyForm> {
     dateformatedropdown = dateFormate[0];
     getStateData();
     getCityData();
+    getdata();
   }
 
   @override
   Widget build(BuildContext context) {
+    company_namecontroller = TextEditingController(text: company_name);
+    emailcontroller = TextEditingController(text: email);
+    gst_nocontroller = TextEditingController(text: gst_no);
+    contact_nocontroller = TextEditingController(text: contact_no);
+    zipcodecontroller = TextEditingController(text: zipcode);
+    usernamecontroller = TextEditingController(text: username);
+    localitycontroller = TextEditingController(text: locality);
+    addresscontroller = TextEditingController(text: address);
+
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -694,6 +762,7 @@ class _CompanyFormState extends State<CompanyForm> {
                                             color: lightblackcolor, width: 1)),
                                   ),
                                   child: TextFormField(
+                                    controller: addresscontroller,
                                     minLines: null,
                                     maxLines: null,
                                     keyboardType: TextInputType.multiline,
@@ -761,7 +830,7 @@ class _CompanyFormState extends State<CompanyForm> {
                       width: width * .20,
                       child: CupertinoButton(
                         onPressed: () {
-                          CreateCompany();
+                          EditCompany();
                           Get.back();
                           // ApiServices().Createcompany(
                           //     company_namecontroller.text,
@@ -776,11 +845,13 @@ class _CompanyFormState extends State<CompanyForm> {
                           //     zipcodecontroller.text,
                           //     usernamecontroller.text,
                           //     localitycontroller.text,
-                          //     "${languagedropdown.Language_id}",
+                          //     languagedropdown.Language_id,
                           //     addresscontroller.text,
-                          //     "${dateformatedropdown.dateformate_id}");
-                          // // _formKey.currentState?.validate();
-                          // Get.back();
+                          //     dateformatedropdown!);
+                          // _formKey.currentState?.validate();
+                          // Get.to(SupplierDetails(),
+                          //     duration: Duration(milliseconds: 500),
+                          //     transition: Transition.rightToLeft);
                         },
                         child: Text("Submit"),
                         color: primarycolor,

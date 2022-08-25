@@ -19,22 +19,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
 
-  // Future login() async {
-  //   var request = http.MultipartRequest(
-  //       'POST', Uri.parse('https://hawksapi.nexinfosoft.com/Api/login'));
-  //   request.fields.addAll(
-  //       {'email': emailcontroller.text, 'password': passwordcontroller.text});
-  //
-  //   http.StreamedResponse response = await request.send();
-  //
-  //   if (response.statusCode == 200) {
-  //     print(await response.stream.bytesToString());
-  //     print(response.reasonPhrase);
-  //   } else {
-  //     print(response.reasonPhrase);
-  //   }
-  //   return response.reasonPhrase;
-  // }
 
   bool remember = false;
   @override
@@ -169,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                       // ApiServices()
                       //     .Login(emailcontroller.text, passwordcontroller.text);
                       ApiServices()
-                          .login(emailcontroller.text, passwordcontroller.text);
+                          .Login(emailcontroller.text, passwordcontroller.text);
                     },
                     child: Text("Login"),
                     color: primarycolor,

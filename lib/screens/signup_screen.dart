@@ -73,7 +73,6 @@ class _SignupScreenState extends State<SignupScreen> {
     // TODO: implement initState
     super.initState();
     countrydropdownvalue = country[0];
-    country;
     getStateData();
   }
 
@@ -320,6 +319,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           contactnocontroller.text);
                                       print("$statedropdownvalue");
                                       print("$citydropdownvalue");
+                                      // ApiServices().signup();
                                     },
                                     child: Text("Signup"),
                                     color: primarycolor,

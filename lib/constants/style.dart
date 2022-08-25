@@ -31,11 +31,17 @@ TextStyle subheadline3 = TextStyle(
     fontFamily: "Segoe UI",
     fontWeight: FontWeight.w500,
     color: blackcolor);
+
 TextStyle subheadline4 = TextStyle(
     fontSize: 14,
     fontFamily: "Segoe UI",
     fontWeight: FontWeight.w400,
     color: blackcolor);
+TextStyle subheadline5 = TextStyle(
+    fontSize: 14,
+    fontFamily: "Segoe UI",
+    fontWeight: FontWeight.w400,
+    color: Colors.white);
 
 TextStyle logintext = TextStyle(
     fontSize: 25,

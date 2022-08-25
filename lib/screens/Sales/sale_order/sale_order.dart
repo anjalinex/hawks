@@ -815,41 +815,35 @@ class _SalesOrderState extends State<SalesOrder> {
                   child: Padding(
                       padding: EdgeInsets.all(10),
                       child: Column(children: [
-                        SizedBox(
-                          height: height * .02,
-                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: bordercolor,
-                                ),
+                            CupertinoButton(
+                                color: bordercolor,
+                                padding: EdgeInsets.all(5),
                                 onPressed: () {
                                   setState(() {
                                     data = "payment";
                                   });
                                 },
                                 child: Text("Payment Mode")),
-                            ElevatedButton(
+                            CupertinoButton(
+                                color: bordercolor,
+                                padding: EdgeInsets.all(5),
                                 onPressed: () {
                                   setState(() {
                                     data = 'remarks';
                                   });
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  primary: bordercolor,
-                                ),
                                 child: Text("Remarks")),
-                            ElevatedButton(
+                            CupertinoButton(
+                                color: bordercolor,
+                                padding: EdgeInsets.all(5),
                                 onPressed: () {
                                   setState(() {
                                     data = "invoice";
                                   });
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  primary: bordercolor,
-                                ),
                                 child: Text("Invoice History"))
                           ],
                         ),
@@ -1433,7 +1427,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                   style: subheadline3,
                                 ),
                                 Container(
-                                    width: width * .58,
+                                    width: width * .50,
                                     height: height * .04,
                                     decoration: BoxDecoration(
                                       border: const Border(
@@ -1462,7 +1456,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                   style: subheadline3,
                                 ),
                                 Container(
-                                    width: width * .58,
+                                    width: width * .50,
                                     height: height * .04,
                                     decoration: BoxDecoration(
                                       border: const Border(
@@ -1491,7 +1485,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                   style: subheadline3,
                                 ),
                                 Container(
-                                    width: width * .58,
+                                    width: width * .50,
                                     height: height * .04,
                                     decoration: BoxDecoration(
                                       border: const Border(

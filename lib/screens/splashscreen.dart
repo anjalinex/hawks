@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:hawks/screens/dashboard.dart';
 import 'package:hawks/screens/welcomeScreen.dart';
-
-import 'loginpage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -13,23 +13,29 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  LoggedIn() async {
+    try {
+      Future.delayed(const Duration(seconds: 3), () async {
+        final prefs = await SharedPreferences.getInstance();
+        var user = prefs.getString("email");
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => user != null ? Dashboard() : WelcomeScreen(),
+          ),
+          (route) => false,
+        );
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 4), () {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WelcomeScreen(),
-          ));
-    });
-    // Timer(Duration(seconds: 5),
-    //         () =>
-    //         Get.to(WelcomeScreen(),
-    //             duration: Duration(milliseconds: 1500),
-    //             transition: Transition.rightToLeft)
-    // );
+    LoggedIn();
   }
 
   @override

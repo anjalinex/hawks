@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +8,7 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:hawks/constants/color.dart';
 import 'package:intl/intl.dart';
 import '../../constants/style.dart';
+import '../../constants/url.dart';
 import '../supplier/supplier_form.dart';
 
 class SupplierCRDR extends StatefulWidget {
@@ -16,8 +19,9 @@ class SupplierCRDR extends StatefulWidget {
 }
 
 class _SupplierCRDRState extends State<SupplierCRDR> {
+
   String? gender = "cash";
-  String? customerdropdownvalue;
+  String? supplierdropdownvalue;
   var customer = [
     'Cash',
     'MOM & Me',
@@ -25,10 +29,26 @@ class _SupplierCRDRState extends State<SupplierCRDR> {
     'Mrs.',
   ];
 
+  //Get Supplier Data
+  List supllierData = [];
+  Future<String> getsupllierData() async {
+    http.Response response =
+    await http.get(Uri.parse(view_supplier_details)).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        supllierData = data["data"];
+        print(supllierData);
+      });
+      return response;
+    });
+    return "success";
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getsupllierData();
     datePicked = DateTime.now();
     cheuqedatePicked = DateTime.now();
   }
@@ -132,26 +152,27 @@ class _SupplierCRDRState extends State<SupplierCRDR> {
                       ),
                     )),
                     child: DropdownButton(
-                      isExpanded: true,
-                      underline: Container(),
-                      hint: Text(
-                        "Select Supplier",
-                        style: subheadline,
-                      ),
-                      value: customerdropdownvalue,
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      items: customer.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
-                          child: Text(items),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          customerdropdownvalue = newValue!;
-                        });
-                      },
-                    ),
+                        isExpanded: true,
+                        underline: Container(),
+                        value: supplierdropdownvalue,
+                        hint: Text(
+                          "Select Supplier",
+                          style: subheadline,
+                        ),
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: supllierData.map((items) {
+                          return DropdownMenuItem(
+                            value: items['id'].toString(),
+                            child: Text(
+                                items['supplier_name'].toString()),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            supplierdropdownvalue = newValue!;
+                            print(supplierdropdownvalue);
+                          });
+                        })
                   ),
                 ],
               ),

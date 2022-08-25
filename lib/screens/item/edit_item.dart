@@ -15,34 +15,38 @@ import '../../constants/url.dart';
 import '../supplier/supplier_form.dart';
 import 'package:http/http.dart' as http;
 
-class AddItem extends StatefulWidget {
-  const AddItem({Key? key}) : super(key: key);
+class EditItem extends StatefulWidget {
+  String itemName, Itemsize, Itemcolor, Unit, Sku, purchaseprice;
+  EditItem(this.itemName, this.Sku, this.Itemsize, this.Itemcolor, this.Unit,
+      this.purchaseprice,
+      {Key? key})
+      : super(key: key);
 
   @override
-  State<AddItem> createState() => _AddItemState();
+  State<EditItem> createState() => _EditItemState();
 }
 
-class _AddItemState extends State<AddItem> {
-  final TextEditingController item_name = TextEditingController();
-  final TextEditingController sku = TextEditingController();
-  final TextEditingController hsn = TextEditingController();
-  final TextEditingController barcode = TextEditingController();
-  final TextEditingController minimum_stock = TextEditingController();
-  final TextEditingController opening_stock = TextEditingController();
-  final TextEditingController opening_amount = TextEditingController();
-  final TextEditingController description = TextEditingController();
-  final TextEditingController in_stock = TextEditingController();
-  final TextEditingController mrp = TextEditingController();
-  final TextEditingController Discount = TextEditingController();
-  final TextEditingController purchase_price = TextEditingController();
-  final TextEditingController amount = TextEditingController();
-  final TextEditingController sales_price_withtax = TextEditingController();
-  final TextEditingController sales_margin_criteria = TextEditingController();
-  final TextEditingController sales_margin = TextEditingController();
-  final TextEditingController sales_price_withouttax = TextEditingController();
-  final TextEditingController min_sale_price = TextEditingController();
-  final TextEditingController best_price = TextEditingController();
-  final TextEditingController discount_purchase = TextEditingController();
+class _EditItemState extends State<EditItem> {
+  TextEditingController item_name = TextEditingController();
+  TextEditingController sku = TextEditingController();
+  TextEditingController hsn = TextEditingController();
+  TextEditingController barcode = TextEditingController();
+  TextEditingController minimum_stock = TextEditingController();
+  TextEditingController opening_stock = TextEditingController();
+  TextEditingController opening_amount = TextEditingController();
+  TextEditingController description = TextEditingController();
+  TextEditingController in_stock = TextEditingController();
+  TextEditingController mrp = TextEditingController();
+  TextEditingController Discount = TextEditingController();
+  TextEditingController purchase_price = TextEditingController();
+  TextEditingController amount = TextEditingController();
+  TextEditingController sales_price_withtax = TextEditingController();
+  TextEditingController sales_margin_criteria = TextEditingController();
+  TextEditingController sales_margin = TextEditingController();
+  TextEditingController sales_price_withouttax = TextEditingController();
+  TextEditingController min_sale_price = TextEditingController();
+  TextEditingController best_price = TextEditingController();
+  TextEditingController discount_purchase = TextEditingController();
 
   String? sale = "Sale on MRP";
   String? discount = "Amount";
@@ -132,7 +136,7 @@ class _AddItemState extends State<AddItem> {
       'sku': sku.text,
       'hsn': hsn.text,
       'barcode': barcode.text,
-      'unit_id': "${unitdropdown.unit_id}",
+      'unit_id': "${unitdropdown.unit_name}",
       'itme_size_id': "${itemsizedropdown}",
       'item_color_id': "${itemcolordropdown}",
       'tax_category': "${taxdropdown.taxcategory_name}",
@@ -191,6 +195,7 @@ class _AddItemState extends State<AddItem> {
 
   @override
   Widget build(BuildContext context) {
+    item_name = TextEditingController(text: widget.itemName);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -383,7 +388,7 @@ class _AddItemState extends State<AddItem> {
                   Row(
                     children: [
                       Container(
-                        width: width * .58,
+                        width: width * .50,
                         decoration: BoxDecoration(
                             border: Border(
                           bottom: BorderSide(
@@ -413,6 +418,12 @@ class _AddItemState extends State<AddItem> {
                           },
                         ),
                       ),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.add,
+                            color: primarycolor,
+                          ))
                     ],
                   )
                 ],
@@ -493,7 +504,7 @@ class _AddItemState extends State<AddItem> {
                             underline: Container(),
                             value: itemcolordropdown,
                             hint: Text(
-                              "Select Color",
+                              "Select State",
                               style: loginhinttext,
                             ),
                             icon: const Icon(Icons.keyboard_arrow_down),
@@ -902,8 +913,23 @@ class _AddItemState extends State<AddItem> {
                                 ),
                               ]),
                             ]),
+                        Container(
+                            width: width * .20,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              bottom: BorderSide(
+                                color: lightblackcolor,
+                                width: 1.0,
+                              ),
+                            )),
+                            child: TextField(
+                              cursorColor: lightblackcolor,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                            )),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
                               "Sale Price",
@@ -1068,6 +1094,7 @@ class _AddItemState extends State<AddItem> {
                                   )),
                                   child: TextFormField(
                                     controller: mrp,
+                                    initialValue: "0",
                                     cursorColor: lightblackcolor,
                                     decoration: InputDecoration(
                                         border: InputBorder.none,
@@ -1426,7 +1453,7 @@ class _AddItemState extends State<AddItem> {
                 FlatButton(
                   child: new Text("Cancel"),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Get.back();
                   },
                 ),
               ],

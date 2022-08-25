@@ -95,7 +95,6 @@ class _SupplierFormState extends State<SupplierForm> {
 
     http.StreamedResponse response = await request.send();
     final respStr = await response.stream.bytesToString();
-    print(respStr);
 
     if (response.statusCode == 200) {
       print(respStr);
@@ -132,19 +131,6 @@ class _SupplierFormState extends State<SupplierForm> {
     'India',
   ];
 
-  var states = [
-    'Bihar',
-    'Haryana',
-    'Uttar Pradesh',
-    'Punjab',
-  ];
-
-  var cities = [
-    'India',
-    'Nepal',
-    'Australia',
-    'Japan',
-  ];
   @override
   void initState() {
     // TODO: implement initState

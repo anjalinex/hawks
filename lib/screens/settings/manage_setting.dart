@@ -6,7 +6,9 @@ import 'package:hawks/Model/viewcompanydetails.dart';
 import 'package:hawks/constants/color.dart';
 import 'package:hawks/screens/Sales/create_salereturn.dart';
 import 'package:hawks/screens/settings/company_form.dart';
+import 'package:hawks/screens/settings/edit_company.dart';
 import 'package:hawks/screens/supplier/supplier_form.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Repository/ApiServices.dart';
 import '../../constants/style.dart';
 import '../supplier/supllier_details.dart';
@@ -38,7 +40,15 @@ class _ManageSettingState extends State<ManageSetting> {
           backgroundColor: primarycolor,
           title: Text("Manage Settings"),
         ),
-        body: Padding(
+        body: RefreshIndicator(
+        color: primarycolor,
+        onRefresh: () async {
+        await Future.delayed(Duration(seconds: 1), () {
+        ApiServices().Viewcompany();
+        });
+        setState(() {});
+        },
+        child:Padding(
           padding: EdgeInsets.symmetric(horizontal: 15),
           child: ListView(
             children: [
@@ -241,7 +251,30 @@ class _ManageSettingState extends State<ManageSetting> {
                                                 Row(
                                                   children: [
                                                     IconButton(
-                                                        onPressed: () {},
+                                                        onPressed: () async {
+                                                          final prefs = await SharedPreferences.getInstance();
+                                                         var id = prefs.setString("id", "${data?.id}");
+                                                          var companyName = prefs.setString("companyName", "${data?.companyName}");
+                                                          var email = prefs.setString("email", "${data?.email}");
+                                                          var contactNo = prefs.setString("contactNo", "${data?.contactNo}");
+                                                          var username = prefs.setString("username", "${data?.username}");
+                                                          var address = prefs.setString("address", "${data?.address}");
+                                                          var locality = prefs.setString("locality", "${data?.locality}");
+                                                          var zipcode = prefs.setString("zipcode", "${data?.zipcode}");
+                                                          var gstNo = prefs.setString("gstNo", "${data?.gstNo}");
+                                                          Get.to(
+                                                              EditCompanyForm(
+                                                            // "${data?.id}",
+                                                            // "${data?.companyName}",
+                                                            // "${data?.email}",
+                                                            // "${data?.contactNo}",
+                                                            // "${data?.username}",
+                                                            // "${data?.address}",
+                                                            // "${data?.locality}",
+                                                            // "${data?.zipcode}",
+                                                            // "${data?.gstNo}",
+                                                          ));
+                                                        },
                                                         icon: Icon(Icons.edit,
                                                             color:
                                                                 bordercolor)),
@@ -276,6 +309,7 @@ class _ManageSettingState extends State<ManageSetting> {
                       }))
             ],
           ),
+        )
         ),
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniEndDocked,

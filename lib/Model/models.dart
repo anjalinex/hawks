@@ -25,11 +25,18 @@ class TypeofCom {
   TypeofCom(this.TypeofCom_id, this.TypeofCom_name);
 }
 
-class Location{
-  int? location_id;
-  String? location_name;
+class Language {
+  int? Language_id;
+  String? Language_name;
 
-  Location(this.location_id,this.location_name);
+  Language(this.Language_id, this.Language_name);
+}
+
+class DateFormate {
+  int? dateformate_id;
+  String? dateformate_name;
+
+  DateFormate(this.dateformate_id, this.dateformate_name);
 }
 
 class Titel {
@@ -57,4 +64,22 @@ class TaxCategory {
   int? taxcategory_id;
   String? taxcategory_name;
   TaxCategory(this.taxcategory_id, this.taxcategory_name);
+}
+
+class Unit {
+  int? unit_id;
+  String? unit_name;
+  Unit(this.unit_id, this.unit_name);
+}
+
+class PurcType {
+  int? PurcType_id;
+  String? PurcType_name;
+  PurcType(this.PurcType_id, this.PurcType_name);
+}
+
+class GstType {
+  int? GstType_id;
+  String? GstType_name;
+  GstType(this.GstType_id,this.GstType_name);
 }
