@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:hawks/constants/style.dart';
+import 'package:hawks/screens/Sales/create_salereturn.dart';
 import 'package:hawks/screens/purchase/prchase_order/purchase_order.dart';
 import 'package:hawks/screens/purchase/purchase.dart';
+import 'package:hawks/screens/purchase/purchase_return/purchase_return.dart';
 import 'package:hawks/screens/purchase/purchase_return/purchase_return_details.dart';
 import 'package:hawks/screens/purchase/supllier_cr_dr.dart';
 import 'package:hawks/screens/reports/invoice_report.dart';
@@ -69,15 +71,17 @@ class _DashboardState extends State<Dashboard> {
                         Column(
                           children: [
                             IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.settings,
+                              onPressed: () {
+                                Get.to(SalesOrder());
+                              },
+                              icon: Image.asset(
                                 color: primarycolor,
-                                size: 40,
+                                "assets/images/sales_order.png",
+                                height: height * .05,
                               ),
                             ),
                             Text(
-                              "Setting",
+                              "Sale Order",
                               style: subheadline3,
                             )
                           ],
@@ -85,22 +89,9 @@ class _DashboardState extends State<Dashboard> {
                         Column(
                           children: [
                             IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.create,
-                                color: primarycolor,
-                              ),
-                            ),
-                            Text(
-                              "Master",
-                              style: subheadline3,
-                            )
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.to(Sale());
+                              },
                               icon: Image.asset(
                                 "assets/images/sales.jpg",
                                 height: height * .05,
@@ -115,7 +106,53 @@ class _DashboardState extends State<Dashboard> {
                         Column(
                           children: [
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.to(CreateSaleReturn());
+                              },
+                              icon: Image.asset(
+                                "assets/images/sales_return.png",
+                                height: height * .05,
+                                color: primarycolor,
+                              ),
+                            ),
+                            Text(
+                              "Sales Return",
+                              style: subheadline3,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: height * .02,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Get.to(PurchaseOrder());
+                              },
+                              icon: Image.asset(
+                                color: primarycolor,
+                                "assets/images/purchase_order.png",
+                                height: height * .05,
+                              ),
+                            ),
+                            Text(
+                              "Purchase Order",
+                              style: subheadline3,
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Get.to(Purchase());
+                              },
                               icon: Image.asset(
                                 "assets/images/purchase.png",
                                 height: height * .05,
@@ -124,6 +161,24 @@ class _DashboardState extends State<Dashboard> {
                             ),
                             Text(
                               "Purchase",
+                              style: subheadline3,
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Get.to(PurchaseReturn());
+                              },
+                              icon: Image.asset(
+                                "assets/images/purchase_return.png",
+                                height: height * .05,
+                                color: primarycolor,
+                              ),
+                            ),
+                            Text(
+                              "Purchase Return",
                               style: subheadline3,
                             )
                           ],
@@ -345,19 +400,19 @@ class _DashboardState extends State<Dashboard> {
                             child: Column(children: [
                           InkWell(
                             onTap: () {
-                              Get.to(Sale(),
-                                  duration: Duration(milliseconds: 300),
-                                  transition: Transition.rightToLeft);
-                            },
-                            child: _tile('Create Sale', Icons.create),
-                          ),
-                          InkWell(
-                            onTap: () {
                               Get.to(SalesOrder(),
                                   duration: Duration(milliseconds: 300),
                                   transition: Transition.rightToLeft);
                             },
-                            child: _tile('Sale Order', Icons.group),
+                            child: _tile('Sale Order', Icons.create),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Get.to(Sale(),
+                                  duration: Duration(milliseconds: 300),
+                                  transition: Transition.rightToLeft);
+                            },
+                            child: _tile('Create Sale', Icons.group),
                           ),
                           InkWell(
                             onTap: () {

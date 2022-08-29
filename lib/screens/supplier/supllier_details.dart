@@ -308,7 +308,10 @@ class _SupplierDetailsState extends State<SupplierDetails> {
                                                                 ApiServices()
                                                                     .DeleteSupplierDetails(
                                                                         "${data?.id}");
-                                                                setState(() {});
+                                                                setState(() {
+                                                                  ApiServices()
+                                                                      .ViewSupplier();
+                                                                });
                                                               });
                                                             },
                                                             icon: Icon(

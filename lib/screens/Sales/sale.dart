@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:hawks/Model/viewCustomerDetails.dart';
 import 'package:hawks/constants/color.dart';
 import 'package:intl/intl.dart';
+import '../../Model/models.dart';
 import '../../constants/style.dart';
 import '../../constants/url.dart';
 import '../customer/customer_form.dart';
@@ -20,23 +21,28 @@ class Sale extends StatefulWidget {
 }
 
 class _SaleState extends State<Sale> {
+  TextEditingController mobileNo = TextEditingController();
+  TextEditingController bill_no = TextEditingController();
+  TextEditingController barcode = TextEditingController();
+  TextEditingController cut_stock = TextEditingController();
+  TextEditingController qty = TextEditingController();
+  TextEditingController price = TextEditingController();
+  TextEditingController address = TextEditingController();
+  TextEditingController Tras_Veh_No = TextEditingController();
   String data = "payment";
   String? customerdropdownvalue;
   String? itemdropdownvalue;
   String? unitdropdownvalue;
-  String? itemsizedropdownvalue;
-  String? itemcolordropdownvalue;
   String? posdropdownvalue;
+  String? itemCentredropdownvalue;
   String? salesTypedropdownvalue;
   String? salesOrderdropdownvalue;
-  String? Challandropdownvalue;
-  String? itemCentredropdownvalue;
   String? custTypedropdownvalue;
   String paymentmodedropdown = "Cash";
 
   List<ViewCustomerDetails> CustomerDetails = [];
 
-  //Get Supplier Data
+  //Get Customer Data
   List customerData = [];
   Future<String> getcustomerData() async {
     http.Response response =
@@ -51,12 +57,123 @@ class _SaleState extends State<Sale> {
     return "success";
   }
 
-  var customer = [
-    'Cash',
-    'MOM & Me',
-    'Miss.',
-    'Mrs.',
+  //State Data
+  List statedata = []; //edited line
+  Future<String> getStateData() async {
+    http.Response response = await http.post(Uri.parse(statesApi), body: {
+      "country_id": "101",
+    }).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        statedata = data["data"];
+        print(statedata);
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  //get Item Data
+  List itemData = [];
+  Future<String> getitemData() async {
+    http.Response response =
+        await http.get(Uri.parse(view_item_details)).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        itemData = data["data"];
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  late Unit unitdropdown = Unit(1, "PCS");
+  List<Unit> unit = <Unit>[
+    Unit(1, 'PCS'),
+    Unit(2, 'SET'),
   ];
+
+  //itemColor
+  String? itemcolordropdown;
+  List itemcolor = []; //edited line
+  Future<String> getItemColorData() async {
+    http.Response response =
+        await http.get(Uri.parse(view_itemcolor)).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        itemcolor = data["data"];
+        print(itemcolor);
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  //itemSize
+  String? itemSizedropdown;
+  List itemSize = []; //edited line
+  Future<String> getItemsizeData() async {
+    http.Response response =
+        await http.get(Uri.parse(view_itemsize)).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        itemSize = data["data"];
+        print(itemSize);
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  //get item by Id
+  List ItemIdData = [];
+  var req_qty, expected_date, pricedata, skubarcode, Stock;
+  Future<String> getItemIdData() async {
+    http.Response response = await http.post(Uri.parse(view_item),
+        body: {'id': itemdropdownvalue}).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        ItemIdData = data["data"];
+        skubarcode = ItemIdData[0]["sku"];
+        itemSizedropdown = ItemIdData[0]["itme_size_id"];
+        itemcolordropdown = ItemIdData[0]["item_color_id"];
+        Stock = ItemIdData[0]["minimum_stock"];
+        req_qty = "${1}";
+        pricedata = ItemIdData[0]["mrp"];
+        barcode = TextEditingController(text: skubarcode);
+        cut_stock = TextEditingController(text: Stock);
+        qty = TextEditingController(text: req_qty);
+        price = TextEditingController(text: pricedata);
+        print("ItemIdData${ItemIdData}");
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  //Customer Data
+  List CustomerDataById = [];
+  var mobile_no, credit_limits, Address;
+  Future<String> getCustomerDataById() async {
+    http.Response response =
+        await http.post(Uri.parse(view_customer_byid), body: {
+      "id": customerdropdownvalue,
+    }).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        CustomerDataById = data["data"];
+        mobile_no = CustomerDataById[0]["mobile_no"];
+        posdropdownvalue = CustomerDataById[0]["state_id"];
+        credit_limits = CustomerDataById[0]["creadit_limit"];
+        Address = CustomerDataById[0]["address"];
+        mobileNo = TextEditingController(text: mobile_no);
+        address = TextEditingController(text: Address);
+        print(CustomerDataById);
+      });
+      return response;
+    });
+    return "success";
+  }
 
   var pos = [
     'Uttar Pradesh',
@@ -69,30 +186,11 @@ class _SaleState extends State<Sale> {
     'Choose One',
   ];
 
-  var challan = [
-    'Choose One',
-  ];
-
   var itemCentre = [
     'Main',
   ];
 
   var custType = ['Retail'];
-
-  var item = [
-    'Item Name',
-    'Item Name1',
-    'Item Name2',
-    'Item Name3',
-  ];
-
-  var itemsize = ['S', 'XS', 'M', 'XM', 'L', 'XL'];
-
-  var unit = [
-    'PCS',
-  ];
-
-  var itemColor = ['CHARCOAL BLACK'];
 
   var paymentmode = [
     'Cash',
@@ -109,6 +207,13 @@ class _SaleState extends State<Sale> {
     super.initState();
     getcustomerData();
     datePicked = DateTime.now();
+    getcustomerData();
+    getStateData();
+    getItemsizeData();
+    getItemColorData();
+    getitemData();
+    getItemIdData();
+    unitdropdown = unit[0];
   }
 
   @override
@@ -137,10 +242,15 @@ class _SaleState extends State<Sale> {
                       "Credit Limit  ",
                       style: subheadline3,
                     ),
-                    Text(
-                      "0.00",
-                      style: subheadline3,
-                    ),
+                    credit_limits == null
+                        ? Text(
+                            "0.00",
+                            style: subheadline3,
+                          )
+                        : Text(
+                            credit_limits,
+                            style: subheadline3,
+                          ),
                     SizedBox(
                       width: width * .04,
                     ),
@@ -207,6 +317,7 @@ class _SaleState extends State<Sale> {
                                               setState(() {
                                                 customerdropdownvalue =
                                                     newValue!;
+                                                getCustomerDataById();
                                                 print(customerdropdownvalue);
                                               });
                                             })),
@@ -253,6 +364,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextField(
+                                      controller: mobileNo,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -273,38 +385,36 @@ class _SaleState extends State<Sale> {
                                   style: subheadline3,
                                 ),
                                 Container(
-                                  width: width * .58,
-                                  height: height * .04,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: lightblackcolor, width: 1)),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: Container(),
-                                    hint: Text(
-                                      "Select POS",
-                                      style: subheadline,
+                                    width: width * .58,
+                                    height: height * .04,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: lightblackcolor,
+                                              width: 1)),
                                     ),
-                                    value: posdropdownvalue,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: pos.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: subheadline3,
+                                    child: DropdownButton(
+                                        isExpanded: true,
+                                        underline: Container(),
+                                        value: posdropdownvalue,
+                                        hint: Text(
+                                          "Select State",
+                                          style: subheadline,
                                         ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        posdropdownvalue = newValue!;
-                                      });
-                                    },
-                                  ),
-                                ),
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                        items: statedata.map((items) {
+                                          return DropdownMenuItem(
+                                            value: items['id'].toString(),
+                                            child:
+                                                Text(items['name'].toString()),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            posdropdownvalue = newValue!;
+                                          });
+                                        })),
                               ],
                             ),
                             SizedBox(
@@ -404,51 +514,6 @@ class _SaleState extends State<Sale> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Challan",
-                                  style: subheadline3,
-                                ),
-                                Container(
-                                  width: width * .58,
-                                  height: height * .04,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: lightblackcolor, width: 1)),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: Container(),
-                                    hint: Text(
-                                      "Choose One",
-                                      style: subheadline,
-                                    ),
-                                    value: Challandropdownvalue,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: challan.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: subheadline3,
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        Challandropdownvalue = newValue!;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: height * .01,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
                                   "Item Centre",
                                   style: subheadline3,
                                 ),
@@ -507,6 +572,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextField(
+                                      controller: Tras_Veh_No,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -536,7 +602,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextFormField(
-                                      initialValue: "KAFDGG12412",
+                                      controller: bill_no,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -651,6 +717,7 @@ class _SaleState extends State<Sale> {
                                       ),
                                     ),
                                     child: TextFormField(
+                                      controller: address,
                                       cursorColor: lightblackcolor,
                                       minLines: null,
                                       maxLines: null,
@@ -705,6 +772,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextField(
+                                      controller: barcode,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -728,40 +796,38 @@ class _SaleState extends State<Sale> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Container(
-                                      width: width * .50,
-                                      height: height * .04,
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                color: lightblackcolor,
-                                                width: 1)),
-                                      ),
-                                      child: DropdownButton(
-                                        isExpanded: true,
-                                        underline: Container(),
-                                        hint: Text(
-                                          "Select Item",
-                                          style: subheadline,
+                                        width: width * .50,
+                                        height: height * .04,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color: lightblackcolor,
+                                                  width: 1)),
                                         ),
-                                        value: itemdropdownvalue,
-                                        icon: const Icon(
-                                            Icons.keyboard_arrow_down),
-                                        items: item.map((String items) {
-                                          return DropdownMenuItem(
-                                            value: items,
-                                            child: Text(
-                                              items,
-                                              style: subheadline3,
+                                        child: DropdownButton(
+                                            isExpanded: true,
+                                            underline: Container(),
+                                            value: itemdropdownvalue,
+                                            hint: Text(
+                                              "Select Item",
+                                              style: subheadline,
                                             ),
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            itemdropdownvalue = newValue!;
-                                          });
-                                        },
-                                      ),
-                                    ),
+                                            icon: const Icon(
+                                                Icons.keyboard_arrow_down),
+                                            items: itemData.map((items) {
+                                              return DropdownMenuItem(
+                                                value: items['id'].toString(),
+                                                child: Text(items['item_name']
+                                                    .toString()),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String? newValue) {
+                                              setState(() {
+                                                itemdropdownvalue = newValue!;
+                                                print(itemdropdownvalue);
+                                                getItemIdData();
+                                              });
+                                            })),
                                     Container(
                                         width: width * .08,
                                         height: height * .04,
@@ -803,27 +869,26 @@ class _SaleState extends State<Sale> {
                                         bottom: BorderSide(
                                             color: lightblackcolor, width: 1)),
                                   ),
-                                  child: DropdownButton(
+                                  child: DropdownButton<Unit>(
                                     isExpanded: true,
                                     underline: Container(),
                                     hint: Text(
                                       "Select Unit",
                                       style: subheadline,
                                     ),
-                                    value: unitdropdownvalue,
+                                    value: unitdropdown,
                                     icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: unit.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
+                                    items: unit.map((Unit unit) {
+                                      return DropdownMenuItem<Unit>(
+                                        value: unit,
                                         child: Text(
-                                          items,
-                                          style: subheadline3,
-                                        ),
+                                            "${unit.unit_name}".toString()),
                                       );
                                     }).toList(),
-                                    onChanged: (String? newValue) {
+                                    onChanged: (Unit? newValue) {
                                       setState(() {
-                                        unitdropdownvalue = newValue!;
+                                        unitdropdown = newValue!;
+                                        print(unitdropdown.unit_id);
                                       });
                                     },
                                   ),
@@ -841,38 +906,36 @@ class _SaleState extends State<Sale> {
                                   style: subheadline3,
                                 ),
                                 Container(
-                                  width: width * .58,
-                                  height: height * .04,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: lightblackcolor, width: 1)),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: Container(),
-                                    hint: Text(
-                                      "Select Item Color",
-                                      style: subheadline,
+                                    width: width * .58,
+                                    height: height * .04,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: lightblackcolor,
+                                              width: 1)),
                                     ),
-                                    value: itemcolordropdownvalue,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: itemColor.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: subheadline3,
+                                    child: DropdownButton(
+                                        isExpanded: true,
+                                        underline: Container(),
+                                        value: itemcolordropdown,
+                                        hint: Text(
+                                          "Select Item Color",
+                                          style: loginhinttext,
                                         ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        itemcolordropdownvalue = newValue!;
-                                      });
-                                    },
-                                  ),
-                                ),
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                        items: itemcolor.map((items) {
+                                          return DropdownMenuItem(
+                                            value: items['id'].toString(),
+                                            child: Text(
+                                                items['color_name'].toString()),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            itemcolordropdown = newValue!;
+                                          });
+                                        })),
                               ],
                             ),
                             SizedBox(
@@ -886,38 +949,36 @@ class _SaleState extends State<Sale> {
                                   style: subheadline3,
                                 ),
                                 Container(
-                                  width: width * .58,
-                                  height: height * .04,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: lightblackcolor, width: 1)),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: Container(),
-                                    hint: Text(
-                                      "Select Item Size",
-                                      style: subheadline,
+                                    width: width * .58,
+                                    height: height * .04,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: lightblackcolor,
+                                              width: 1)),
                                     ),
-                                    value: itemcolordropdownvalue,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: itemColor.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: subheadline3,
+                                    child: DropdownButton(
+                                        isExpanded: true,
+                                        underline: Container(),
+                                        value: itemSizedropdown,
+                                        hint: Text(
+                                          "Select Item Size",
+                                          style: loginhinttext,
                                         ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        itemcolordropdownvalue = newValue!;
-                                      });
-                                    },
-                                  ),
-                                ),
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                        items: itemSize.map((items) {
+                                          return DropdownMenuItem(
+                                            value: items['id'].toString(),
+                                            child: Text(
+                                                items['size_name'].toString()),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            itemSizedropdown = newValue!;
+                                          });
+                                        })),
                               ],
                             ),
                             SizedBox(
@@ -940,6 +1001,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextField(
+                                      controller: cut_stock,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -969,6 +1031,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextField(
+                                      controller: qty,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -998,6 +1061,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextField(
+                                      controller: price,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:

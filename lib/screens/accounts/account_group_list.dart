@@ -192,8 +192,6 @@ class _AccountGroupListState extends State<AccountGroupList> {
                               "Primary Group",
                               style: subheadline3,
                             ),
-                            SizedBox(
-                                width: MediaQuery.of(context).size.width * .20),
                             Container(
                               width: MediaQuery.of(context).size.width * .30,
                               decoration: const BoxDecoration(
@@ -233,8 +231,6 @@ class _AccountGroupListState extends State<AccountGroupList> {
                               "Group",
                               style: subheadline3,
                             ),
-                            SizedBox(
-                                width: MediaQuery.of(context).size.width * .20),
                             Container(
                               width: MediaQuery.of(context).size.width * .30,
                               decoration: const BoxDecoration(
@@ -271,7 +267,7 @@ class _AccountGroupListState extends State<AccountGroupList> {
                     ),
                 actions: <Widget>[
                   new Container(
-                      width: width * .15,
+                      width: width * .20,
                       child: CupertinoButton(
                         child: Text("Submit"),
                         color: bordercolor,
@@ -283,7 +279,7 @@ class _AccountGroupListState extends State<AccountGroupList> {
                         },
                       )),
                   Container(
-                      width: width * .15,
+                      width: width * .20,
                       child: CupertinoButton(
                         child: Text("Cancel"),
                         color: redcolor,

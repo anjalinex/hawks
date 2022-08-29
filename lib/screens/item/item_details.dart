@@ -269,7 +269,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                                     children: [
                                                       Text("MRP :"),
                                                       Text(
-                                                          "${data?.purchasePrice}"),
+                                                          "${data?.mrp}"),
                                                     ],
                                                   ),
                                                   SizedBox(
@@ -282,7 +282,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                                     children: [
                                                       Text("Dis.MRP :"),
                                                       Text(
-                                                          "${data?.purchasePrice}"),
+                                                          "${data?.discount}"),
                                                     ],
                                                   ),
                                                   SizedBox(
@@ -295,7 +295,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                                     children: [
                                                       Text("Sale Price :"),
                                                       Text(
-                                                          "${data?.purchasePrice}"),
+                                                          "${data?.salesPriceWithtax}"),
                                                     ],
                                                   ),
                                                   SizedBox(

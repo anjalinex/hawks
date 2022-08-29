@@ -273,7 +273,10 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                                                               ApiServices()
                                                                   .DeleteCustomerDetails(
                                                                       "${data?.id}");
-                                                              setState(() {});
+                                                              setState(() {
+                                                                ApiServices()
+                                                                    .ViewCustomer();
+                                                              });
                                                             });
                                                           },
                                                           icon: Icon(

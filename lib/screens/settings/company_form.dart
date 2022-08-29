@@ -694,6 +694,7 @@ class _CompanyFormState extends State<CompanyForm> {
                                             color: lightblackcolor, width: 1)),
                                   ),
                                   child: TextFormField(
+                                    controller: addresscontroller,
                                     minLines: null,
                                     maxLines: null,
                                     keyboardType: TextInputType.multiline,

@@ -355,7 +355,10 @@ class _InvoiceSettingState extends State<InvoiceSetting> {
                                                                 ApiServices()
                                                                     .DeleteInvoiceDetails(
                                                                         "${data?.id}");
-                                                                setState(() {});
+                                                                setState(() {
+                                                                  ApiServices()
+                                                                      .ViewInvoice();
+                                                                });
                                                               });
                                                             },
                                                             icon: Icon(

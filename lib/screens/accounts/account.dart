@@ -347,7 +347,7 @@ class _AccountState extends State<Account> {
                 actions: <Widget>[
                   // usually buttons at the bottom of the dialog
                   new Container(
-                      width: width * .15,
+                      width: width * .20,
                       child: CupertinoButton(
                         child: Text("Submit"),
                         color: bordercolor,
@@ -359,7 +359,7 @@ class _AccountState extends State<Account> {
                         },
                       )),
                   Container(
-                      width: width * .15,
+                      width: width * .20,
                       child: CupertinoButton(
                         child: Text("Cancel"),
                         color: redcolor,

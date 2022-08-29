@@ -184,7 +184,7 @@ class _PurchaseState extends State<Purchase> {
     return "success";
   }
 
-  List statedata = []; //edited line
+  List statedata = [];
   Future<String> getStateData() async {
     http.Response response = await http.post(Uri.parse(statesApi), body: {
       "country_id": "101",

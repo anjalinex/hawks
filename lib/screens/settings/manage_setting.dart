@@ -284,7 +284,10 @@ class _ManageSettingState extends State<ManageSetting> {
                                                             ApiServices()
                                                                 .DeleteCompanyDetails(
                                                                     "${data?.id}");
-                                                            setState(() {});
+                                                              setState(() {
+                                                                ApiServices()
+                                                                    .Viewcompany();
+                                                            });
                                                           });
                                                         },
                                                         icon: Icon(Icons.delete,

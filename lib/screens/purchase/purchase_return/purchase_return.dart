@@ -247,7 +247,7 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
       'item_center': "${itemCenterDropdown}",
       'return_bill_no': BillNo.text,
       'purchase_bill_no': bill_no.toString(),
-      'bill_date': _selectedDate,
+      'bill_date': _selectedDate == null ? Text("${DateTime.now()}"):_selectedDate,
       'item_id': itemdropdownvalue,
       'unit_id': "${unitdropdown.unit_id}",
       'item_color_id': itemcolordropdownvalue,
@@ -1567,7 +1567,7 @@ class _PurchaseReturnState extends State<PurchaseReturn> {
         });
 
     setState(() {
-      _selectedDate = DateFormat("dd-MM-yyyy").format(datePicked!);
+      _selectedDate = DateFormat("yyyy-MM-dd").format(datePicked!);
     });
   }
 }

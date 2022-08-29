@@ -54,7 +54,7 @@ class _CustomerFormState extends State<CustomerForm> {
       'email': email.text,
       'gst_no': gst_no.text,
       'birthday': birthday.text,
-      'anniversary': '',
+      'anniversary': anniversary.text,
       'opening_balance': opening_balance.text,
       'title': "${Titeldropdownvalue.title_id}",
       'credit_days': credit_days.text,

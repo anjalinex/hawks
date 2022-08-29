@@ -83,3 +83,15 @@ class GstType {
   String? GstType_name;
   GstType(this.GstType_id,this.GstType_name);
 }
+
+class SaleType{
+  int? SaleType_id;
+  String? SaleType_name;
+  SaleType(this.SaleType_id,this.SaleType_name);
+}
+
+class SalesType{
+  int? SalesType_id;
+  String? SalesType_name;
+  SalesType(this.SalesType_id,this.SalesType_name);
+}
