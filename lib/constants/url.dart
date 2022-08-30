@@ -43,3 +43,7 @@ String view_purchase_return = baseurl + "view_purchase_return";
 String view_customer_byid = baseurl + "view_customer_byid";
 String create_sales_order = baseurl + "create_sales_order";
 String view_sales_order = baseurl + "view_sales_order";
+String view_sales_details_byid = baseurl + "view_sales_details_byid";
+String create_sales = baseurl + "create_sales";
+String view_sales = baseurl + "view_sales";
+String remove_sales = baseurl + "remove_sales";

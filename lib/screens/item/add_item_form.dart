@@ -33,7 +33,6 @@ class _AddItemState extends State<AddItem> {
   final TextEditingController description = TextEditingController();
   final TextEditingController in_stock = TextEditingController();
   final TextEditingController mrp = TextEditingController();
-  final TextEditingController Discount = TextEditingController();
   final TextEditingController purchase_price = TextEditingController();
   final TextEditingController amount = TextEditingController();
   final TextEditingController sales_price_withtax = TextEditingController();
@@ -46,8 +45,13 @@ class _AddItemState extends State<AddItem> {
 
   String? sale = "Sale on MRP";
   String? discount = "Amount";
+  String? margin = "Amount";
   bool value = false;
   String? itemsizedropdown;
+
+  // var quantity = _quantity.text == '' ? 0 : double.parse(_quantity.text);
+  // var price = _price.text == '' ? 0 : double.parse(_price.text);
+  // var gstAmount = _textSlab.text == '' ? 0 : (quantity * price * double.parse(_textSlab.text) / 100);
 
   late TaxCategory taxdropdown = TaxCategory(1, 'Exempt');
   List<TaxCategory> taxCategory = <TaxCategory>[
@@ -127,6 +131,8 @@ class _AddItemState extends State<AddItem> {
   Future CreateItem() async {
     var request = http.MultipartRequest('POST', Uri.parse(createitems_details));
     var saledata = sale == "Sale on MRP" ? 1 : 0;
+    var discountdata = discount == "Amount" ? 1 : 0;
+    var margindata = margin == "Amount" ? 1 : 0;
     request.fields.addAll({
       'category_id': "${categoryDropdownValue}",
       'item_name': item_name.text,
@@ -147,10 +153,10 @@ class _AddItemState extends State<AddItem> {
       'description': description.text,
       'sales': "${saledata}",
       'mrp': mrp.text,
-      'discount': Discount.text,
+      'discount': "${discountdata}",
       'amount': amount.text,
       'sales_price_withtax': sales_price_withtax.text,
-      'sales_margin_criteria': sales_margin_criteria.text,
+      'sales_margin_criteria': "${margindata}",
       'sales_margin': sales_margin.text,
       'sales_price_withouttax': sales_price_withouttax.text,
       'min_sale_price': min_sale_price.text,
@@ -550,6 +556,172 @@ class _AddItemState extends State<AddItem> {
                     height: height * .01,
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Minimum Stock",
+                        style: subheadline3,
+                      ),
+                      Container(
+                          width: width * .58,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            bottom: BorderSide(
+                              color: lightblackcolor,
+                              width: 1.0,
+                            ),
+                          )),
+                          child: TextField(
+                            cursorColor: lightblackcolor,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          )),
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * .01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Opening Stock",
+                        style: subheadline3,
+                      ),
+                      Container(
+                          width: width * .58,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            bottom: BorderSide(
+                              color: lightblackcolor,
+                              width: 1.0,
+                            ),
+                          )),
+                          child: TextField(
+                            cursorColor: lightblackcolor,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          )),
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * .01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Opening Amount",
+                        style: subheadline3,
+                      ),
+                      Container(
+                          width: width * .58,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            bottom: BorderSide(
+                              color: lightblackcolor,
+                              width: 1.0,
+                            ),
+                          )),
+                          child: TextField(
+                            cursorColor: lightblackcolor,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          )),
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * .01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      //SizedBox
+                      Text(
+                        'Sale Without Purchase',
+                        style: subheadline3,
+                      ), //Text
+                      // SizedBox(width: width * .10), //SizedBox
+                      Checkbox(
+                        value: this.value,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            this.value = value!;
+                          });
+                        },
+                      ),
+                      value == true
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "InStock",
+                                      style: subheadline3,
+                                    ),
+                                    Container(
+                                        width: width * .20,
+                                        decoration: BoxDecoration(
+                                            border: Border(
+                                          bottom: BorderSide(
+                                            color: lightblackcolor,
+                                            width: 1.0,
+                                          ),
+                                        )),
+                                        child: TextFormField(
+                                          initialValue: "0",
+                                          textAlign: TextAlign.center,
+                                          cursorColor: lightblackcolor,
+                                          decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Container()
+                    ], //<Widget>[]
+                  ),
+                  SizedBox(
+                    height: height * .01,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Description",
+                        style: subheadline3,
+                      ),
+                      Container(
+                          width: width * .58,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            bottom: BorderSide(
+                              color: lightblackcolor,
+                              width: 1.0,
+                            ),
+                          )),
+                          child: TextFormField(
+                            controller: description,
+                            maxLines: null,
+                            minLines: null,
+                            cursorColor: lightblackcolor,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                            ),
+                          )),
+                    ],
+                  ),
+                  SizedBox(
+                    height: height * .01,
+                  ),
+                  Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -665,13 +837,20 @@ class _AddItemState extends State<AddItem> {
                               ),
                       ]),
                   SizedBox(
+                    height: height * .02,
+                  ),
+                  Text(
+                    "Purchase Details",
+                    style: subheadline1,
+                  ),
+                  SizedBox(
                     height: height * .01,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Minimum Stock",
+                        "Base Price",
                         style: subheadline3,
                       ),
                       Container(
@@ -684,6 +863,7 @@ class _AddItemState extends State<AddItem> {
                             ),
                           )),
                           child: TextField(
+                            controller: best_price,
                             cursorColor: lightblackcolor,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -695,141 +875,56 @@ class _AddItemState extends State<AddItem> {
                     height: height * .01,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Opening Stock",
-                        style: subheadline3,
-                      ),
-                      Container(
-                          width: width * .58,
-                          decoration: BoxDecoration(
-                              border: Border(
-                            bottom: BorderSide(
-                              color: lightblackcolor,
-                              width: 1.0,
-                            ),
-                          )),
-                          child: TextField(
-                            cursorColor: lightblackcolor,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                          )),
-                    ],
-                  ),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Discount(%)",
+                          style: subheadline3,
+                        ),
+                        Container(
+                            width: width * .58,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              bottom: BorderSide(
+                                color: lightblackcolor,
+                                width: 1.0,
+                              ),
+                            )),
+                            child: TextField(
+                              controller: discount_purchase,
+                              cursorColor: lightblackcolor,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                            )),
+                      ]),
                   SizedBox(
                     height: height * .01,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Opening Amount",
-                        style: subheadline3,
-                      ),
-                      Container(
-                          width: width * .58,
-                          decoration: BoxDecoration(
-                              border: Border(
-                            bottom: BorderSide(
-                              color: lightblackcolor,
-                              width: 1.0,
-                            ),
-                          )),
-                          child: TextField(
-                            cursorColor: lightblackcolor,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                          )),
-                    ],
-                  ),
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      //SizedBox
-                      Text(
-                        'Sale Without Purchase',
-                        style: TextStyle(fontSize: 17.0),
-                      ), //Text
-                      // SizedBox(width: width * .10), //SizedBox
-                      Checkbox(
-                        value: this.value,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            this.value = value!;
-                          });
-                        },
-                      ),
-                      value == true
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "InStock",
-                                      style: subheadline3,
-                                    ),
-                                    Container(
-                                        width: width * .10,
-                                        decoration: BoxDecoration(
-                                            border: Border(
-                                          bottom: BorderSide(
-                                            color: lightblackcolor,
-                                            width: 1.0,
-                                          ),
-                                        )),
-                                        child: TextFormField(
-                                          initialValue: "0",
-                                          textAlign: TextAlign.center,
-                                          cursorColor: lightblackcolor,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                              ],
-                            )
-                          : Container()
-                    ], //<Widget>[]
-                  ),
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Description",
-                        style: subheadline3,
-                      ),
-                      Container(
-                          width: width * .58,
-                          decoration: BoxDecoration(
-                              border: Border(
-                            bottom: BorderSide(
-                              color: lightblackcolor,
-                              width: 1.0,
-                            ),
-                          )),
-                          child: TextFormField(
-                            controller: description,
-                            maxLines: null,
-                            minLines: null,
-                            cursorColor: lightblackcolor,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                          )),
-                    ],
-                  ),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Purchase Price",
+                          style: subheadline3,
+                        ),
+                        Container(
+                            width: width * .58,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              bottom: BorderSide(
+                                color: lightblackcolor,
+                                width: 1.0,
+                              ),
+                            )),
+                            child: TextField(
+                              controller: purchase_price,
+                              cursorColor: lightblackcolor,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                            )),
+                      ]),
                   SizedBox(
                     height: height * .02,
                   ),
@@ -902,39 +997,50 @@ class _AddItemState extends State<AddItem> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Discount On MRP",
+                                    "Discount\nOn MRP",
                                     style: subheadline3,
                                   ),
-                                  Row(
-                                    children: [
-                                      Radio(
-                                          value: "Amount",
-                                          groupValue: discount,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              discount = value.toString();
-                                            });
-                                          }),
-                                      Text(
-                                        "Amount",
-                                        style: subheadline3,
-                                      ),
-                                    ],
+                                  Radio(
+                                      value: "Amount",
+                                      groupValue: discount,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          discount = value.toString();
+                                        });
+                                      }),
+                                  Text(
+                                    "Amount",
+                                    style: subheadline3,
                                   ),
-                                  Row(children: [
-                                    Radio(
-                                        value: "Per(%)",
-                                        groupValue: discount,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            discount = value.toString();
-                                          });
-                                        }),
-                                    Text(
-                                      "Per(%)",
-                                      style: subheadline3,
-                                    ),
-                                  ]),
+                                  Radio(
+                                      value: "Per(%)",
+                                      groupValue: discount,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          discount = value.toString();
+                                        });
+                                      }),
+                                  Text(
+                                    "Per(%)",
+                                    style: subheadline3,
+                                  ),
+                                  Container(
+                                      width: width * .20,
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                        bottom: BorderSide(
+                                          color: lightblackcolor,
+                                          width: 1.0,
+                                        ),
+                                      )),
+                                      child: TextField(
+                                        textAlign: TextAlign.center,
+                                        controller: amount,
+                                        cursorColor: lightblackcolor,
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                        ),
+                                      )),
                                 ]),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -971,32 +1077,32 @@ class _AddItemState extends State<AddItem> {
                             ),
                             Column(
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Sales Margin\nCriteria",
-                                      style: subheadline3,
-                                    ),
-                                    Container(
-                                        width: width * .58,
-                                        decoration: BoxDecoration(
-                                            border: Border(
-                                          bottom: BorderSide(
-                                            color: lightblackcolor,
-                                            width: 1.0,
-                                          ),
-                                        )),
-                                        child: TextField(
-                                          controller: sales_margin_criteria,
-                                          cursorColor: lightblackcolor,
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                          ),
-                                        )),
-                                  ],
-                                ),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text(
+                                //       "Sales Margin\nCriteria",
+                                //       style: subheadline3,
+                                //     ),
+                                //     Container(
+                                //         width: width * .58,
+                                //         decoration: BoxDecoration(
+                                //             border: Border(
+                                //           bottom: BorderSide(
+                                //             color: lightblackcolor,
+                                //             width: 1.0,
+                                //           ),
+                                //         )),
+                                //         child: TextField(
+                                //           controller: sales_margin_criteria,
+                                //           cursorColor: lightblackcolor,
+                                //           decoration: InputDecoration(
+                                //             border: InputBorder.none,
+                                //           ),
+                                //         )),
+                                //   ],
+                                // ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -1116,6 +1222,41 @@ class _AddItemState extends State<AddItem> {
                                       )),
                                 ],
                               ),
+                              SizedBox(
+                                height: height * .01,
+                              ),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Sales Margin Criteria",
+                                      style: subheadline3,
+                                    ),
+                                    Radio(
+                                        value: "Amount",
+                                        groupValue: margin,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            margin = value.toString();
+                                          });
+                                        }),
+                                    Text(
+                                      "Amount",
+                                      style: subheadline3,
+                                    ),
+                                    Radio(
+                                        value: "Per(%)",
+                                        groupValue: margin,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            margin = value.toString();
+                                          });
+                                        }),
+                                    Text(
+                                      "Per(%)",
+                                      style: subheadline3,
+                                    ),
+                                  ]),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -1231,95 +1372,6 @@ class _AddItemState extends State<AddItem> {
                             ],
                           ),
                   ]),
-                  SizedBox(
-                    height: height * .02,
-                  ),
-                  Text(
-                    "Purchase Details",
-                    style: subheadline1,
-                  ),
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Base Price",
-                        style: subheadline3,
-                      ),
-                      Container(
-                          width: width * .58,
-                          decoration: BoxDecoration(
-                              border: Border(
-                            bottom: BorderSide(
-                              color: lightblackcolor,
-                              width: 1.0,
-                            ),
-                          )),
-                          child: TextField(
-                            controller: best_price,
-                            cursorColor: lightblackcolor,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                          )),
-                    ],
-                  ),
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Discount(%)",
-                          style: subheadline3,
-                        ),
-                        Container(
-                            width: width * .58,
-                            decoration: BoxDecoration(
-                                border: Border(
-                              bottom: BorderSide(
-                                color: lightblackcolor,
-                                width: 1.0,
-                              ),
-                            )),
-                            child: TextField(
-                              controller: description,
-                              cursorColor: lightblackcolor,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                            )),
-                      ]),
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Purchase Price",
-                          style: subheadline3,
-                        ),
-                        Container(
-                            width: width * .58,
-                            decoration: BoxDecoration(
-                                border: Border(
-                              bottom: BorderSide(
-                                color: lightblackcolor,
-                                width: 1.0,
-                              ),
-                            )),
-                            child: TextField(
-                              controller: purchase_price,
-                              cursorColor: lightblackcolor,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                            )),
-                      ]),
                   SizedBox(
                     height: height * .04,
                   ),

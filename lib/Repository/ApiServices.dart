@@ -27,6 +27,7 @@ import '../Model/ViewPurchaseorder.dart';
 import '../Model/viewInvoiceDetails.dart';
 import '../Model/viewInvoiceDetails.dart';
 import '../Model/viewInvoiceDetails.dart';
+import '../Model/viewSalse.dart';
 import '../Model/view_itemcolor.dart';
 
 class ApiServices {
@@ -88,7 +89,6 @@ class ApiServices {
     }
   }
 
-
   //Login
   Future Login(
     String email,
@@ -105,10 +105,8 @@ class ApiServices {
     print(response.statusCode);
     if (response.statusCode == 200 && dataresponse["message"] == "Success") {
       Get.offAll(Dashboard());
-      final prefs =
-      await SharedPreferences
-          .getInstance();
-       user = prefs.setString("email", dataresponse["data"]["email"]);
+      final prefs = await SharedPreferences.getInstance();
+      user = prefs.setString("email", dataresponse["data"]["email"]);
 
       Fluttertoast.showToast(
           msg: "Login Successful",
@@ -233,7 +231,6 @@ class ApiServices {
           fontSize: 16.0);
     }
   }
-
 
 //ViewCompanyDetails
   Future<ViewCompanyDetails> Viewcompany() async {
@@ -435,9 +432,7 @@ class ApiServices {
 
   //ViewCreatePurchase
   Future<ViewCreatePurchase> ViewcreatePurchase() async {
-    return http
-        .get(Uri.parse(view_purchase))
-        .then((http.Response response) {
+    return http.get(Uri.parse(view_purchase)).then((http.Response response) {
       final int statusCode = response.statusCode;
       if (statusCode != 200) {
         throw new Exception("Error");
@@ -461,7 +456,8 @@ class ApiServices {
 
   //ViewCreatePurchaseReturn
   Future<ViewPurchaseReturn> ViewPurchasereturn() async {
-    return http.get(Uri.parse(view_purchase_return))
+    return http
+        .get(Uri.parse(view_purchase_return))
         .then((http.Response response) {
       final int statusCode = response.statusCode;
       if (statusCode != 200) {
@@ -473,8 +469,7 @@ class ApiServices {
 
   //ViewSalesOrder
   Future<ViewSalesOrderDetails> ViewSalesOrder() async {
-    return http.get(Uri.parse(view_sales_order))
-        .then((http.Response response) {
+    return http.get(Uri.parse(view_sales_order)).then((http.Response response) {
       final int statusCode = response.statusCode;
       if (statusCode != 200) {
         throw new Exception("Error");
@@ -482,4 +477,32 @@ class ApiServices {
       return ViewSalesOrderDetails.fromJson(json.decode(response.body));
     });
   }
+
+  //ViewSalesOrder
+  Future<ViewSalesDetails> ViewSales() async {
+    return http.get(Uri.parse(view_sales)).then((http.Response response) {
+      final int statusCode = response.statusCode;
+      if (statusCode != 200) {
+        throw new Exception("Error");
+      }
+      return ViewSalesDetails.fromJson(json.decode(response.body));
+    });
+  }
+
+  //DeleteSupplierDetails
+  Future DeleteSalesDetails(
+      String id,
+      ) async {
+    var request = http.MultipartRequest('POST', Uri.parse(remove_sales));
+    request.fields.addAll({'id': id});
+    http.StreamedResponse response = await request.send();
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+      print(response.reasonPhrase);
+    } else {
+      print(response.reasonPhrase);
+    }
+    return response.reasonPhrase;
+  }
+
 }

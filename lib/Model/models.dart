@@ -81,17 +81,17 @@ class PurcType {
 class GstType {
   int? GstType_id;
   String? GstType_name;
-  GstType(this.GstType_id,this.GstType_name);
+  GstType(this.GstType_id, this.GstType_name);
 }
 
-class SaleType{
+class SaleType {
   int? SaleType_id;
   String? SaleType_name;
-  SaleType(this.SaleType_id,this.SaleType_name);
+  SaleType(this.SaleType_id, this.SaleType_name);
 }
 
-class SalesType{
+class SalesType {
   int? SalesType_id;
   String? SalesType_name;
-  SalesType(this.SalesType_id,this.SalesType_name);
+  SalesType(this.SalesType_id, this.SalesType_name);
 }

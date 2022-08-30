@@ -1,10 +1,10 @@
-class ViewSalesOrderDetails {
+class ViewSalesDetails {
   String? message;
   List<Data>? data;
 
-  ViewSalesOrderDetails({this.message, this.data});
+  ViewSalesDetails({this.message, this.data});
 
-  ViewSalesOrderDetails.fromJson(Map<String, dynamic> json) {
+  ViewSalesDetails.fromJson(Map<String, dynamic> json) {
     message = json['message'];
     if (json['data'] != null) {
       data = <Data>[];
@@ -26,79 +26,82 @@ class ViewSalesOrderDetails {
 
 class Data {
   String? id;
-  String? salesType;
+  String? customerId;
   String? mobileNo;
   String? pos;
-  String? customerId;
-  String? saleType;
+  String? salesType;
+  String? salesOrdder;
+  String? itemCentre;
+  String? transVehNo;
   String? billNo;
   String? billDate;
-  String? deliveryDate;
+  String? address;
   String? barcode;
   String? itemId;
   String? unitId;
   String? itemColorId;
-  String? itmeSizeId;
-  String? stock;
+  String? itemSizeId;
+  String? currStock;
   String? qty;
   String? price;
   String? isdeleted;
+  String? createdAt;
   String? unit;
   String? itemName;
-  String? amount;
-  String? discountPurchase;
   String? itemsize;
   String? itemcolor;
 
   Data(
       {this.id,
-        this.salesType,
-        this.mobileNo,
-        this.pos,
-        this.customerId,
-        this.saleType,
-        this.billNo,
-        this.billDate,
-        this.deliveryDate,
-        this.barcode,
-        this.itemId,
-        this.unitId,
-        this.itemColorId,
-        this.itmeSizeId,
-        this.stock,
-        this.qty,
-        this.price,
-        this.isdeleted,
-        this.unit,
-        this.itemName,
-        this.amount,
-        this.discountPurchase,
-        this.itemsize,
-        this.itemcolor});
+      this.customerId,
+      this.mobileNo,
+      this.pos,
+      this.salesType,
+      this.salesOrdder,
+      this.itemCentre,
+      this.transVehNo,
+      this.billNo,
+      this.billDate,
+      this.address,
+      this.barcode,
+      this.itemId,
+      this.unitId,
+      this.itemColorId,
+      this.itemSizeId,
+      this.currStock,
+      this.qty,
+      this.price,
+      this.isdeleted,
+      this.createdAt,
+      this.unit,
+      this.itemName,
+      this.itemsize,
+      this.itemcolor});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    salesType = json['sales_type'];
+    customerId = json['customer_id'];
     mobileNo = json['mobile_no'];
     pos = json['pos'];
-    customerId = json['customer_id'];
-    saleType = json['sale_type'];
+    salesType = json['sales_type'];
+    salesOrdder = json['sales_ordder'];
+    itemCentre = json['item_centre'];
+    transVehNo = json['trans_veh_no'];
     billNo = json['bill_no'];
     billDate = json['bill_date'];
-    deliveryDate = json['delivery_date'];
+    address = json['address'];
     barcode = json['barcode'];
     itemId = json['item_id'];
     unitId = json['unit_id'];
     itemColorId = json['item_color_id'];
-    itmeSizeId = json['itme_size_id'];
-    stock = json['stock'];
+    itemSizeId = json['item_size_id'];
+    currStock = json['curr_stock'];
     qty = json['qty'];
     price = json['price'];
     isdeleted = json['isdeleted'];
+    createdAt = json['created_at'];
     unit = json['unit'];
     itemName = json['item_name'];
-    amount = json['amount'];
-    discountPurchase = json['discount_purchase'];
     itemsize = json['itemsize'];
     itemcolor = json['itemcolor'];
   }
@@ -106,27 +109,28 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['sales_type'] = this.salesType;
+    data['customer_id'] = this.customerId;
     data['mobile_no'] = this.mobileNo;
     data['pos'] = this.pos;
-    data['customer_id'] = this.customerId;
-    data['sale_type'] = this.saleType;
+    data['sales_type'] = this.salesType;
+    data['sales_ordder'] = this.salesOrdder;
+    data['item_centre'] = this.itemCentre;
+    data['trans_veh_no'] = this.transVehNo;
     data['bill_no'] = this.billNo;
     data['bill_date'] = this.billDate;
-    data['delivery_date'] = this.deliveryDate;
+    data['address'] = this.address;
     data['barcode'] = this.barcode;
     data['item_id'] = this.itemId;
     data['unit_id'] = this.unitId;
     data['item_color_id'] = this.itemColorId;
-    data['itme_size_id'] = this.itmeSizeId;
-    data['stock'] = this.stock;
+    data['item_size_id'] = this.itemSizeId;
+    data['curr_stock'] = this.currStock;
     data['qty'] = this.qty;
     data['price'] = this.price;
     data['isdeleted'] = this.isdeleted;
+    data['created_at'] = this.createdAt;
     data['unit'] = this.unit;
     data['item_name'] = this.itemName;
-    data['amount'] = this.amount;
-    data['discount_purchase'] = this.discountPurchase;
     data['itemsize'] = this.itemsize;
     data['itemcolor'] = this.itemcolor;
     return data;

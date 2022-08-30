@@ -238,6 +238,23 @@ class _SalesOrderState extends State<SalesOrder> {
     }
   }
 
+  claerData() {
+    mobileNo.clear();
+    posdropdownvalue == null;
+    customerdropdownvalue == null;
+    saleTypedropdown = saleType[0];
+    datePicked = DateTime.now();
+    DeliverydatePicked = DateTime.now();
+    barcode.clear();
+    itemdropdownvalue == null;
+    unitdropdown = unit[0];
+    itemcolordropdown == null;
+    itemSizedropdown == null;
+    stock.clear();
+    qty.clear();
+    price.clear();
+  }
+
   var itemCentre = [
     'Main',
   ];
@@ -1001,7 +1018,10 @@ class _SalesOrderState extends State<SalesOrder> {
                                       onPressed: () {
                                         addSaleOrder();
                                         _formKey.currentState?.reset();
-                                        isLoading = true;
+                                        claerData();
+                                        setState(() {
+                                          isLoading = true;
+                                        });
                                       },
                                       child: Text("Add"),
                                       color: primarycolor,
@@ -1837,7 +1857,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text("Item Name :"),
-                                      Text(""),
+                                      Text("${data?.itemName}"),
                                     ],
                                   ),
                                   SizedBox(
@@ -1884,20 +1904,6 @@ class _SalesOrderState extends State<SalesOrder> {
                                       Text("${data?.itemsize}"),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: height * .01,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Item Code :"),
-                                      Text("NA"),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: height * .01,
-                                  ),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -1936,7 +1942,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text("Discount(%) :"),
-                                      Text("NA"),
+                                      Text("${data?.discountPurchase}"),
                                     ],
                                   ),
                                   SizedBox(
@@ -1947,7 +1953,7 @@ class _SalesOrderState extends State<SalesOrder> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text("Dicount(Amount) :"),
-                                      Text("NA"),
+                                      Text("${data?.discountPurchase}"),
                                     ],
                                   ),
                                   SizedBox(

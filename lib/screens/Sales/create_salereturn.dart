@@ -435,7 +435,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                      width: width * .20,
+                      width: width * .30,
                       child: CupertinoButton(
                         child: Text("Show Bill"),
                         color: primarycolor,

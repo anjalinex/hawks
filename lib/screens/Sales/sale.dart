@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:hawks/Model/viewCustomerDetails.dart';
+import 'package:hawks/Model/viewSalse.dart';
 import 'package:hawks/constants/color.dart';
 import 'package:intl/intl.dart';
 import '../../Model/models.dart';
+import '../../Repository/ApiServices.dart';
+import '../../Repository/ApiServices.dart';
 import '../../constants/style.dart';
 import '../../constants/url.dart';
 import '../customer/customer_form.dart';
@@ -24,11 +28,12 @@ class _SaleState extends State<Sale> {
   TextEditingController mobileNo = TextEditingController();
   TextEditingController bill_no = TextEditingController();
   TextEditingController barcode = TextEditingController();
-  TextEditingController cut_stock = TextEditingController();
+  TextEditingController cur_stock = TextEditingController();
   TextEditingController qty = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController Tras_Veh_No = TextEditingController();
+  bool customer = true;
   String data = "payment";
   String? customerdropdownvalue;
   String? itemdropdownvalue;
@@ -141,7 +146,7 @@ class _SaleState extends State<Sale> {
         req_qty = "${1}";
         pricedata = ItemIdData[0]["mrp"];
         barcode = TextEditingController(text: skubarcode);
-        cut_stock = TextEditingController(text: Stock);
+        cur_stock = TextEditingController(text: Stock);
         qty = TextEditingController(text: req_qty);
         price = TextEditingController(text: pricedata);
         print("ItemIdData${ItemIdData}");
@@ -164,10 +169,60 @@ class _SaleState extends State<Sale> {
         CustomerDataById = data["data"];
         mobile_no = CustomerDataById[0]["mobile_no"];
         posdropdownvalue = CustomerDataById[0]["state_id"];
-        credit_limits = CustomerDataById[0]["creadit_limit"];
         Address = CustomerDataById[0]["address"];
         mobileNo = TextEditingController(text: mobile_no);
         address = TextEditingController(text: Address);
+        print(CustomerDataById);
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  //Bill_no Data
+  List billdata = [];
+  Future<String> getbilldata() async {
+    http.Response response =
+        await http.get(Uri.parse(view_sales_order)).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        billdata = data["data"];
+        print(billdata);
+      });
+      return response;
+    });
+    return "success";
+  }
+
+  //Customer Data
+  List billDataById = [];
+  var _stock, _qyt, _price;
+  Future<String> getbillDataById() async {
+    http.Response response =
+        await http.post(Uri.parse(view_sales_details_byid), body: {
+      "id": salesOrderdropdownvalue,
+    }).then((response) {
+      var data = json.decode(response.body);
+      setState(() {
+        billDataById = data["data"];
+        mobile_no = billDataById[0]["mobile_no"];
+        customerdropdownvalue = billDataById[0]["customer_id"];
+        posdropdownvalue = billDataById[0]["pos"];
+        _selectedDate = billDataById[0]["bill_date"];
+        skubarcode = billDataById[0]["barcode"];
+        itemdropdownvalue = billDataById[0]["item_id"];
+        unitdropdownvalue = billDataById[0]["unit_id"];
+        itemcolordropdown = billDataById[0]["item_color_id"];
+        itemSizedropdown = billDataById[0]["itme_size_id"];
+        _stock = billDataById[0]["stock"];
+        _qyt = billDataById[0]["qty"];
+        _price = billDataById[0]["price"];
+        mobileNo = TextEditingController(text: mobile_no);
+        barcode = TextEditingController(text: skubarcode);
+        cur_stock = TextEditingController(text: _stock);
+        qty = TextEditingController(text: _qyt);
+        price = TextEditingController(text: _price);
+
         print(CustomerDataById);
       });
       return response;
@@ -180,17 +235,57 @@ class _SaleState extends State<Sale> {
     'Haryana',
   ];
 
-  var salesType = ['Direct', 'Sale Order', 'Challan'];
-
-  var saleOrder = [
-    'Choose One',
+  late SalesType salesTypedropdown = SalesType(1, "Direct");
+  List<SalesType> salesType = <SalesType>[
+    SalesType(1, 'Direct'),
   ];
 
-  var itemCentre = [
-    'Main',
-  ];
-
-  var custType = ['Retail'];
+  //Add Create Sale
+  Future addSales() async {
+    var data = {
+      'customer_id': customerdropdownvalue,
+      'mobile_no': mobileNo.text,
+      'pos': posdropdownvalue,
+      'sales_type': "${salesTypedropdown.SalesType_id}",
+      'sales_ordder': salesOrderdropdownvalue,
+      'trans_veh_no': Tras_Veh_No.text,
+      'bill_no': bill_no.text,
+      'bill_date': _selectedDate == null ? "${DateTime.now()}" : _selectedDate,
+      'address': address.text,
+      'barcode': barcode.text,
+      'item_id': itemdropdownvalue,
+      'unit_id': "${unitdropdown.unit_id}",
+      'item_color_id': itemcolordropdown,
+      'item_size_id': itemSizedropdown,
+      'curr_stock': cur_stock.text,
+      'qty': qty.text,
+      'price': price.text
+    };
+    print(data);
+    var response = await http.post(Uri.parse(create_sales), body: data);
+    var dataresponse = jsonDecode(response.body);
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Fluttertoast.showToast(
+          msg: dataresponse["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: dataresponse["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
 
   var paymentmode = [
     'Cash',
@@ -213,7 +308,9 @@ class _SaleState extends State<Sale> {
     getItemColorData();
     getitemData();
     getItemIdData();
+    getbilldata();
     unitdropdown = unit[0];
+    salesTypedropdown = salesType[0];
   }
 
   @override
@@ -229,6 +326,11 @@ class _SaleState extends State<Sale> {
             color: Colors.black,
             onRefresh: () async {
               getcustomerData();
+              getCustomerDataById();
+              getitemData();
+              getbilldata();
+              getbillDataById();
+              ApiServices().ViewSales();
               setState(() {});
             },
             child: Padding(
@@ -435,27 +537,27 @@ class _SaleState extends State<Sale> {
                                         bottom: BorderSide(
                                             color: lightblackcolor, width: 1)),
                                   ),
-                                  child: DropdownButton(
+                                  child: DropdownButton<SalesType>(
                                     isExpanded: true,
                                     underline: Container(),
                                     hint: Text(
-                                      "Select Sales Type",
+                                      "Select Sale Type",
                                       style: subheadline,
                                     ),
-                                    value: salesTypedropdownvalue,
+                                    value: salesTypedropdown,
                                     icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: salesType.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
+                                    items: salesType.map((SalesType salesType) {
+                                      return DropdownMenuItem<SalesType>(
+                                        value: salesType,
                                         child: Text(
-                                          items,
-                                          style: subheadline3,
-                                        ),
+                                            "${salesType.SalesType_name}"
+                                                .toString()),
                                       );
                                     }).toList(),
-                                    onChanged: (String? newValue) {
+                                    onChanged: (SalesType? newValue) {
                                       setState(() {
-                                        salesTypedropdownvalue = newValue!;
+                                        salesTypedropdown = newValue!;
+                                        print(salesTypedropdown.SalesType_id);
                                       });
                                     },
                                   ),
@@ -473,83 +575,38 @@ class _SaleState extends State<Sale> {
                                   style: subheadline3,
                                 ),
                                 Container(
-                                  width: width * .58,
-                                  height: height * .04,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: lightblackcolor, width: 1)),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: Container(),
-                                    hint: Text(
-                                      "Select Order",
-                                      style: subheadline,
+                                    width: width * .58,
+                                    height: height * .04,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              color: lightblackcolor,
+                                              width: 1)),
                                     ),
-                                    value: salesOrderdropdownvalue,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: saleOrder.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: subheadline3,
+                                    child: DropdownButton(
+                                        isExpanded: true,
+                                        underline: Container(),
+                                        value: salesOrderdropdownvalue,
+                                        hint: Text(
+                                          "Select Order",
+                                          style: subheadline,
                                         ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        salesOrderdropdownvalue = newValue!;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: height * .01,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Item Centre",
-                                  style: subheadline3,
-                                ),
-                                Container(
-                                  width: width * .58,
-                                  height: height * .04,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: lightblackcolor, width: 1)),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: Container(),
-                                    hint: Text(
-                                      "Select Centre",
-                                      style: subheadline,
-                                    ),
-                                    value: itemCentredropdownvalue,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: itemCentre.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: subheadline3,
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        itemCentredropdownvalue = newValue!;
-                                      });
-                                    },
-                                  ),
-                                ),
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down),
+                                        items: billdata.map((items) {
+                                          return DropdownMenuItem(
+                                            value: items['id'].toString(),
+                                            child: Text(
+                                                items['bill_no'].toString()),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            salesOrderdropdownvalue = newValue!;
+                                            getbillDataById();
+                                            print(salesOrderdropdownvalue);
+                                          });
+                                        })),
                               ],
                             ),
                             SizedBox(
@@ -638,11 +695,11 @@ class _SaleState extends State<Sale> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            "${datePicked?.day}"
+                                            "${datePicked?.year}"
                                             "/"
                                             "${datePicked?.month}"
                                             "/"
-                                            "${datePicked?.year}",
+                                            "${datePicked?.day}",
                                           ),
                                           IconButton(
                                               onPressed: () {
@@ -652,51 +709,6 @@ class _SaleState extends State<Sale> {
                                         ],
                                       )),
                                 ]),
-                            SizedBox(
-                              height: height * .01,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Cust.Type",
-                                  style: subheadline3,
-                                ),
-                                Container(
-                                  width: width * .58,
-                                  height: height * .04,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        bottom: BorderSide(
-                                            color: lightblackcolor, width: 1)),
-                                  ),
-                                  child: DropdownButton(
-                                    isExpanded: true,
-                                    underline: Container(),
-                                    hint: Text(
-                                      "Select Cust Type",
-                                      style: subheadline,
-                                    ),
-                                    value: custTypedropdownvalue,
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: custType.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(
-                                          items,
-                                          style: subheadline3,
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        custTypedropdownvalue = newValue!;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
                             SizedBox(
                               height: height * .01,
                             ),
@@ -1001,7 +1013,7 @@ class _SaleState extends State<Sale> {
                                               width: 1)),
                                     ),
                                     child: TextField(
-                                      controller: cut_stock,
+                                      controller: cur_stock,
                                       cursorColor: lightblackcolor,
                                       decoration: InputDecoration(
                                         contentPadding:
@@ -1080,7 +1092,9 @@ class _SaleState extends State<Sale> {
                                 Container(
                                     width: width * .20,
                                     child: CupertinoButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        addSales();
+                                      },
                                       child: Text("Add"),
                                       color: primarycolor,
                                       padding:
@@ -1094,157 +1108,7 @@ class _SaleState extends State<Sale> {
                             SizedBox(
                               height: height * .02,
                             ),
-                            Container(
-                              // height: height * .30,
-                              child: ListView.builder(
-                                  itemCount: 1,
-                                  shrinkWrap: true,
-                                  physics: BouncingScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Card(
-                                        elevation: 2,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        shadowColor: primarycolor,
-                                        child: Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("SN :"),
-                                                    Text("${index + 1}")
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                // Row(
-                                                //   mainAxisAlignment:
-                                                //       MainAxisAlignment.spaceBetween,
-                                                //   children: [
-                                                //     Text("Return No :"),
-                                                //     Expanded(child: Text("NA")),
-                                                //   ],
-                                                // ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Item Name :"),
-                                                    Text("NA"),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Unit :"),
-                                                    Text("NA"),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Item Color :"),
-                                                    Text("NA"),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Item Size :"),
-                                                    Text("NA"),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Item Code :"),
-                                                    Text("NA"),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Ret Qty :"),
-                                                    Text("NA"),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Total :"),
-                                                    Text("NA"),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text("Action"),
-                                                    IconButton(
-                                                        onPressed: () {},
-                                                        icon: Icon(Icons.delete,
-                                                            color: Color(
-                                                                0xffAB2328)))
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: height * .01,
-                                                ),
-                                              ]),
-                                        ));
-                                  }),
-                            )
+                            dataList(context)
                           ]))),
                   Card(
                       elevation: 2,
@@ -2028,6 +1892,155 @@ class _SaleState extends State<Sale> {
                 ]))));
   }
 
+  Widget dataList(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    return Container(
+        child: FutureBuilder<ViewSalesDetails>(
+            future: ApiServices().ViewSales(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemCount: snapshot.data?.data?.length,
+                    itemBuilder: (context, index) {
+                      var data = snapshot.data?.data![index];
+                      return Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          shadowColor: primarycolor,
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("SN :"),
+                                      Text("${index + 1}")
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Item Name :"),
+                                      Text("${data?.itemName}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Unit :"),
+                                      Text("${data?.unit}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Item Color :"),
+                                      Text("${data?.itemcolor}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Item Size :"),
+                                      Text("${data?.itemsize}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Cur.Stock :"),
+                                      Text("${data?.currStock}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Qty :"),
+                                      Text("${data?.qty}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Price :"),
+                                      Text("${data?.price}"),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Action"),
+                                      IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              ApiServices().DeleteSalesDetails(
+                                                  "${data?.id}");
+                                              setState(() {
+                                                ApiServices().ViewSales();
+                                              });
+                                            });
+                                          },
+                                          icon: Icon(Icons.delete,
+                                              color: Color(0xffAB2328)))
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height * .01,
+                                  ),
+                                ]),
+                          ));
+                    });
+              } else {
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: primarycolor,
+                ));
+              }
+            }));
+  }
+
   var _selectedDate;
   DateTime? datePicked;
 
@@ -2048,7 +2061,7 @@ class _SaleState extends State<Sale> {
         });
 
     setState(() {
-      _selectedDate = DateFormat("dd-MM-yyyy").format(datePicked!);
+      _selectedDate = DateFormat("yyyy-MM-dd").format(datePicked!);
     });
   }
 }
